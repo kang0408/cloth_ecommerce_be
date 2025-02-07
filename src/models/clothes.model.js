@@ -1,0 +1,29 @@
+const mongoose = require("mongoose");
+
+const clothSchema = new mongoose.Schema(
+  {
+    title: String,
+    description: String,
+    price: Number,
+    discountPercentage: Number,
+    stock: Number,
+    thumbnail: String,
+    status: String,
+    rating: {
+      like: Number,
+      dislike: Number
+    },
+    deleted: {
+      type: Boolean,
+      default: false
+    },
+    deletedAt: Date
+  },
+  {
+    timestamps: true
+  }
+);
+
+const Cloth = mongoose.model("Cloth", clothSchema, "clothes");
+
+module.exports = Cloth;
