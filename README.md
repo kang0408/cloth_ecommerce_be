@@ -34,6 +34,7 @@ cloth-management/
 │   ├── routes/        # API routes
 │   ├── middlewares/   # Custom middleware functions
 │   ├── utils/         # Utility functions
+│   ├── helpers/       # Helpers
 │   ├── validation/    # Data validation logic
 │   ├── app.js         # Express app initialization
 │   ├── server.js      # Server entry point (listens on a port)
