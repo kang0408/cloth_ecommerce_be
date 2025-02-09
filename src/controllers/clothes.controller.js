@@ -1,5 +1,3 @@
-const { default: httpStatus } = require("http-status");
-
 const paginationHandler = require("../helpers/pagination.helper");
 const dataResponseFormat = require("../helpers/dataResponseFormat.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
@@ -27,12 +25,12 @@ module.exports.clothes = async (req, res) => {
     const paginationDefault = { currentPage: 1, limitPage: 5 };
     const pageTotal = await Cloth.countDocuments();
     const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
-    console.log(paginationObject);
 
     const clothes = await Cloth.find(find)
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
-      .sort(sort);
+      .sort(sort)
+      .select("-_id -__v");
 
     return successResponse(
       res,
