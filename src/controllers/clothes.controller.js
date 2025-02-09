@@ -1,6 +1,7 @@
 const { default: httpStatus } = require("http-status");
 
 const paginationHandler = require("../helpers/pagination.helper");
+const dataResponseFormat = require("../helpers/dataResponseFormat.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
 
 const Cloth = require("../models/clothes.model");
@@ -42,6 +43,21 @@ module.exports.clothes = async (req, res) => {
       },
       "Get all clothes successfully"
     );
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+// [POST] api/v1/clothes/create
+module.exports.create = async (req, res) => {
+  try {
+    req.body.createdAt = new Date();
+    const newCloth = new Cloth(req.body);
+    const data = await newCloth.save();
+
+    const result = dataResponseFormat(data);
+
+    return successResponse(res, result, "Create cloth successfully");
   } catch (error) {
     return errorResponse(res, error);
   }
