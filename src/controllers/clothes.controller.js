@@ -87,3 +87,36 @@ module.exports.edit = async (req, res) => {
     return errorResponse(res, error);
   }
 };
+
+// [DELETE] api/v1/clothes/delete/:id
+module.exports.delete = async (req, res) => {
+  try {
+    const id = req.params.id;
+    const sortType = req.query.sortType;
+
+    const cloth = await Cloth.findOne({
+      _id: id,
+      deleted: false
+    });
+
+    if (!cloth) {
+      return errorResponse(res, null, 404, "Cloth not found or already deleted");
+    }
+
+    if (sortType === "soft") {
+      await Cloth.updateOne(
+        { _id: id },
+        {
+          deleted: true,
+          deletedAt: new Date()
+        }
+      );
+    } else {
+      await Cloth.deleteOne({ _id: id });
+    }
+
+    return successResponse(res, null, "Delete cloth successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};

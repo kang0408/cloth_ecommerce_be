@@ -12,4 +12,6 @@ router.post("/create", clothValidate.createCloth, controller.create);
 
 router.patch("/edit/:id", clothValidate.editCloth, controller.edit);
 
+router.delete("/delete/:id", controller.delete);
+
 module.exports = router;
