@@ -8,10 +8,11 @@ const successResponse = (res, data, message = "Success") => {
   });
 };
 
-const errorResponse = (res, error, statusCode = 500) => {
+const errorResponse = (res, error, statusCode = 500, message) => {
   return res.status(statusCode).json({
     success: false,
-    message: error.message
+    code: statusCode,
+    message: message ? message : error.message
   });
 };
 
