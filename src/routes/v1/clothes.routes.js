@@ -14,4 +14,6 @@ router.patch("/edit/:id", clothValidate.editCloth, controller.edit);
 
 router.delete("/delete/:id", controller.delete);
 
+router.get("/details/:id", controller.details);
+
 module.exports = router;

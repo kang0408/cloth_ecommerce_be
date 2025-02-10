@@ -120,3 +120,19 @@ module.exports.delete = async (req, res) => {
     return errorResponse(res, error);
   }
 };
+
+// [GET] api/v1/clothes/details/:id
+module.exports.details = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const cloth = await Cloth.findById(id);
+    if (!cloth) {
+      return errorResponse(res, null, 404, "Cloth not found");
+    }
+
+    return successResponse(res, cloth, "Get details cloth successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
