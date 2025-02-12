@@ -1,5 +1,5 @@
 const paginationHandler = require("../helpers/pagination.helper");
-const dataResponseFormat = require("../helpers/dataResponseFormat.helper");
+const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
 
 const Cloth = require("../models/clothes.model");
@@ -7,18 +7,16 @@ const Cloth = require("../models/clothes.model");
 // [GET] api/v1/clothes
 module.exports.clothes = async (req, res) => {
   try {
-    const { sortBy, sortValue } = req.query;
-
     const find = {
       deleted: false
     };
 
     // Sort
-    const sort = {};
+    const { sortBy, sortValue } = req.query;
+    const sort = sortHandler(req.query);
     if (sortBy) {
       if (sortBy.toLowerCase() === "like" || sortBy.toLowerCase() === "dislike")
         sort[`rating.${sortBy.toLowerCase()}`] = sortValue === "asc" ? 1 : -1;
-      sort[sortBy] = sortValue === "asc" ? 1 : -1;
     }
 
     // Pagination
@@ -53,7 +51,8 @@ module.exports.create = async (req, res) => {
     const newCloth = new Cloth(req.body);
     const data = await newCloth.save();
 
-    const result = dataResponseFormat(data);
+    const result = data.toObject();
+    delete result.__v;
 
     return successResponse(res, result, "Create cloth successfully");
   } catch (error) {
