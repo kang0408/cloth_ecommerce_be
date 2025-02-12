@@ -3,7 +3,7 @@ const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
 
 const Category = require("../models/category.model");
-
+const mongoose = require("mongoose");
 // [GET] api/v1/categories
 module.exports.categories = async (req, res) => {
   try {
@@ -53,6 +53,22 @@ module.exports.categories = async (req, res) => {
       },
       "Get all categories successfully"
     );
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+// [GET] api/v1/categories/details/:id
+module.exports.details = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const cate = await Category.findOne({ _id: id, deleted: false });
+    if (!cate) {
+      return errorResponse(res, null, 404, "Category not found");
+    }
+
+    return successResponse(res, cate, "Get details cloth successfully");
   } catch (error) {
     return errorResponse(res, error);
   }
