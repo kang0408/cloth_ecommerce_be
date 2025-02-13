@@ -22,20 +22,35 @@ module.exports.categories = async (req, res) => {
     const cates = await Category.aggregate([
       {
         $lookup: {
-          from: "categories", // Find in what document?
-          localField: "_id", // Main key?
-          foreignField: "parentId", // Foreign key?
-          as: "subCategories" // Where it save?
+          from: "categories",
+          let: { categoryId: "$_id" }, // Tạo biến `categoryId`
+          pipeline: [
+            {
+              $match: {
+                $expr: {
+                  $and: [
+                    { $in: ["$$categoryId", "$parentId"] }, // Kiểm tra nếu `_id` của danh mục cha có trong `parentId`
+                    { $eq: ["$deleted", false] } // Chỉ lấy subCategories chưa bị xóa
+                  ]
+                }
+              }
+            },
+            {
+              $project: { __v: 0 } // Loại bỏ trường __v khỏi subCategories
+            }
+          ],
+          as: "subCategories"
         }
       },
       {
         $match: {
-          parentId: { $size: 0 }, // Filter parent
+          parentId: { $size: 0 }, // Chỉ lấy các danh mục có parentId là mảng rỗng []
           deleted: false,
-          ...(filter
-            ? { name: { $regex: filter, $options: "i" } } // Nếu có filter → thêm điều kiện lọc
-            : {}) // Nếu không có filter → không thêm gì cả (object rỗng)
+          ...(filter ? { name: { $regex: filter, $options: "i" } } : {})
         }
+      },
+      {
+        $project: { __v: 0 } // Loại bỏ trường __v khỏi danh mục cha
       },
       ...(Object.keys(sort).length > 0 ? [{ $sort: sort }] : [{ $sort: { createdAt: -1 } }]),
       {
