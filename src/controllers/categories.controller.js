@@ -1,3 +1,5 @@
+const mongoose = require("mongoose");
+
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
@@ -69,6 +71,27 @@ module.exports.details = async (req, res) => {
     }
 
     return successResponse(res, cate, "Get details cloth successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+// [POST] api/v1/categories/create
+module.exports.create = async (req, res) => {
+  try {
+    const { parentId } = req.body;
+    const objectIdArr = parentId.map((id) => new mongoose.Types.ObjectId(id));
+
+    req.body.parentId = objectIdArr;
+    req.body.createdAt = new Date();
+
+    const newCate = await Category(req.body);
+    const result = await newCate.save();
+
+    const data = result.toObject();
+    delete data.__v;
+
+    return successResponse(res, data, "Create cloth successfully");
   } catch (error) {
     return errorResponse(res, error);
   }
