@@ -8,4 +8,6 @@ router.get("", controller.categories);
 
 router.get("/details/:id", controller.details);
 
+router.delete("/delete/:id", controller.delete);
+
 module.exports = router;
