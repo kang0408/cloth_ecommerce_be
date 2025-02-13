@@ -131,7 +131,7 @@ module.exports.edit = async (req, res) => {
 // [POST] api/v1/categories/create
 module.exports.create = async (req, res) => {
   try {
-    const { parentId } = req.body;
+    const { parentId = [] } = req.body;
     const objectIdArr = parentId.map((id) => new mongoose.Types.ObjectId(id));
 
     req.body.parentId = objectIdArr;
@@ -143,7 +143,7 @@ module.exports.create = async (req, res) => {
     const data = result.toObject();
     delete data.__v;
 
-    return successResponse(res, data, "Create cloth successfully");
+    return successResponse(res, data, "Create category successfully");
   } catch (error) {
     return errorResponse(res, error);
   }
