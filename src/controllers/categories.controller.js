@@ -91,6 +91,43 @@ module.exports.details = async (req, res) => {
   }
 };
 
+// [PATCH] api/v1/categories/edit/:id
+module.exports.edit = async (req, res) => {
+  try {
+    const id = req.params.id;
+
+    const cate = await Category.findOne({
+      _id: id,
+      deleted: false
+    });
+
+    if (!cate) {
+      return errorResponse(res, null, 404, "Category not found");
+    }
+
+    const { parentId = [] } = req.body;
+    const objectIdArr = parentId.map((id) => new mongoose.Types.ObjectId(id));
+
+    req.body.parentId = objectIdArr;
+    req.body.updatedAt = new Date();
+
+    const result = await Category.updateOne({ _id: id }, req.body);
+
+    if (result.modifiedCount === 0) {
+      return errorResponse(res, null, 400, "No changes applied");
+    }
+
+    const data = await Category.findOne({
+      _id: id,
+      deleted: false
+    }).select("-__v");
+
+    return successResponse(res, data, "Update category successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
 // [POST] api/v1/categories/create
 module.exports.create = async (req, res) => {
   try {

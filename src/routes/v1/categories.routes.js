@@ -9,6 +9,8 @@ router.get("", controller.categories);
 
 router.get("/details/:id", controller.details);
 
+router.patch("/edit/:id", cateValidate.editCate, controller.edit);
+
 router.post("/create", cateValidate.createCate, controller.create);
 
 router.delete("/delete/:id", controller.delete);
