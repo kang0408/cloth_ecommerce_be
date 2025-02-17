@@ -6,6 +6,7 @@ const mailHelper = require("../helpers/sendMail.helper");
 
 const { successResponse, errorResponse } = require("../helpers/response.helper");
 
+// [POST] api/v1/otp/send-otp
 module.exports.sendOtp = async (req, res) => {
   try {
     const { email } = req.body;
@@ -39,6 +40,7 @@ module.exports.sendOtp = async (req, res) => {
   }
 };
 
+// [POST] api/v1/otp/verify-otp
 module.exports.verifyOtp = async (req, res) => {
   try {
     const { email, otp } = req.body;
