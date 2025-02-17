@@ -66,3 +66,82 @@ module.exports.login = async (req, res, next) => {
     return errorResponse(res, error, 400);
   }
 };
+
+module.exports.forgot = async (req, res, next) => {
+  try {
+    const userSchema = baseJoi.object({
+      email: baseJoi.string().email().required().messages({
+        "string.email": "Invalid email format"
+      })
+    });
+
+    const response = userSchema.validate(req.body);
+
+    if (response.error) return errorResponse(res, response.error);
+    else next();
+  } catch (error) {
+    return errorResponse(res, error, 400);
+  }
+};
+
+module.exports.reset = async (req, res, next) => {
+  try {
+    const userSchema = baseJoi.object({
+      newPassword: baseJoi
+        .string()
+        .required()
+        .custom((value, helpers) => {
+          if (!/^(?=.*[0-9])(?=.*[A-Za-z])\S{8,}$/.test(value)) {
+            return helpers.message(
+              "Password must be at least 8 characters long and contain both letters and numbers."
+            );
+          }
+          return value;
+        }),
+      verifyToken: baseJoi.string().optional()
+    });
+
+    const response = userSchema.validate(req.body);
+
+    if (response.error) return errorResponse(res, response.error);
+    else next();
+  } catch (error) {
+    return errorResponse(res, error, 400);
+  }
+};
+
+module.exports.change = async (req, res, next) => {
+  try {
+    const userSchema = baseJoi.object({
+      oldPassword: baseJoi
+        .string()
+        .required()
+        .custom((value, helpers) => {
+          if (!/^(?=.*[0-9])(?=.*[A-Za-z])\S{8,}$/.test(value)) {
+            return helpers.message(
+              "Password must be at least 8 characters long and contain both letters and numbers."
+            );
+          }
+          return value;
+        }),
+      newPassword: baseJoi
+        .string()
+        .required()
+        .custom((value, helpers) => {
+          if (!/^(?=.*[0-9])(?=.*[A-Za-z])\S{8,}$/.test(value)) {
+            return helpers.message(
+              "New password must be at least 8 characters long and contain both letters and numbers."
+            );
+          }
+          return value;
+        })
+    });
+
+    const response = userSchema.validate(req.body);
+
+    if (response.error) return errorResponse(res, response.error);
+    else next();
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
