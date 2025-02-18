@@ -14,6 +14,11 @@ router.post("/forgot-password", authValidate.forgot, controller.forgot);
 
 router.post("/reset-password", authValidate.reset, controller.reset);
 
-router.post("/change-password", middleware.auth, authValidate.change, controller.change);
+router.post(
+  "/change-password",
+  middleware.auth(["user", "admin"]),
+  authValidate.change,
+  controller.change
+);
 
 module.exports = router;
