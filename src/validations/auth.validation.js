@@ -42,7 +42,7 @@ module.exports.login = async (req, res, next) => {
         "string.min": "Username is too short",
         "string.max": "Username exceeds 20 characters"
       }),
-      email: baseJoi.string().email().optional().messages({
+      email: baseJoi.string().email().required().messages({
         "string.email": "Invalid email format"
       }),
       password: baseJoi

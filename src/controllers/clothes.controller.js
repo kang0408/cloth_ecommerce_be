@@ -4,6 +4,7 @@ const { default: httpStatus } = require("http-status");
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
+const cloudinary = require("../configs/cloudinary");
 
 const Cloth = require("../models/clothes.model");
 const Cate = require("../models/category.model");
@@ -32,7 +33,7 @@ module.exports.clothes = async (req, res) => {
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)
-      .select("-__v");
+      .select("-__v -cloudinary_id");
 
     return successResponse(
       res,
@@ -56,11 +57,30 @@ module.exports.create = async (req, res) => {
 
     req.body.cateId = objectIdArr;
     req.body.createdAt = new Date();
-    const newCloth = new Cloth(req.body);
+
+    let newCloth;
+    // checking avatar/files
+    if (req.files && req.files.length > 0) {
+      // using cloudinary.uploader.upload() to upload image in cloundinary
+      const result = await cloudinary.uploader.upload(req.files[0].path, {
+        width: 200, // setting width
+        height: 200, // setting height
+        crop: "thumb",
+        gravity: "auto"
+      });
+
+      req.body.thumbnail = result.secure_url;
+      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
+      newCloth = new Cloth(req.body);
+    } else {
+      newCloth = new Cloth(req.body);
+    }
+
     const data = await newCloth.save();
 
     const result = data.toObject();
     delete result.__v;
+    delete result.cloudinary_id;
 
     return successResponse(res, result, "Create cloth successfully");
   } catch (error) {
@@ -83,6 +103,20 @@ module.exports.edit = async (req, res) => {
     const objectIdArr = cateId.map((id) => new mongoose.Types.ObjectId(id));
 
     req.body.cateId = objectIdArr;
+    // checking avatar/files
+    if (req.files && req.files.length > 0) {
+      // using cloudinary.uploader.upload() to upload image in cloundinary
+      const result = await cloudinary.uploader.upload(req.files[0].path, {
+        width: 200, // setting width
+        height: 200, // setting height
+        crop: "thumb",
+        gravity: "auto"
+      });
+
+      await cloudinary.uploader.destroy(cloth.cloudinary_id);
+      req.body.thumbnail = result.secure_url;
+      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
+    }
 
     // Cập nhật quần áo
     const result = await Cloth.updateOne({ _id: id }, req.body);
@@ -92,7 +126,7 @@ module.exports.edit = async (req, res) => {
       return errorResponse(res, null, httpStatus.BAD_REQUEST, "No changes applied");
     }
 
-    const data = await Cloth.findById(id);
+    const data = await Cloth.findById(id).select("-__v -cloudinary_id");
 
     return successResponse(res, data, "Edit cloth successfully");
   } catch (error) {
@@ -124,6 +158,8 @@ module.exports.delete = async (req, res) => {
         }
       );
     } else {
+      if (cloth.thumbnail && cloth.cloudinary_id)
+        await cloudinary.uploader.destroy(cloth.cloudinary_id);
       await Cloth.deleteOne({ _id: id });
     }
 
@@ -138,7 +174,7 @@ module.exports.details = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const cloth = await Cloth.findById(id);
+    const cloth = await Cloth.findById(id).select("-cloudinary_id");
     if (!cloth) {
       return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
@@ -153,7 +189,6 @@ module.exports.details = async (req, res) => {
 module.exports.clothesByCate = async (req, res) => {
   try {
     const { id } = req.params;
-    console.log(id);
 
     // Sort
     const { sortBy, sortValue } = req.query;
@@ -177,7 +212,7 @@ module.exports.clothesByCate = async (req, res) => {
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)
-      .select("-__v");
+      .select("-__v -cloudinary_id");
 
     return successResponse(
       res,

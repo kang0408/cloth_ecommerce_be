@@ -8,7 +8,11 @@ const clothSchema = new mongoose.Schema(
     discountPercentage: Number,
     stock: Number,
     thumbnail: String,
-    status: String,
+    cloudinary_id: String,
+    status: {
+      type: String,
+      default: "active"
+    },
     rating: {
       like: Number,
       dislike: Number

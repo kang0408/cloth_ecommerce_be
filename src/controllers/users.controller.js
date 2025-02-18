@@ -6,6 +6,7 @@ const User = require("../models/users.model");
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
+const cloudinary = require("../configs/cloudinary");
 
 // [GET] api/v1/users
 module.exports.users = async (req, res) => {
@@ -22,7 +23,7 @@ module.exports.users = async (req, res) => {
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)
-      .select("-__v -password");
+      .select("-__v -password -cloudinary_id");
 
     return successResponse(
       res,
@@ -43,7 +44,7 @@ module.exports.profile = async (req, res) => {
   try {
     const { id, role } = req.user;
 
-    let select = "-__v -password";
+    let select = "-__v -password -cloudinary_id";
     if (role === "admin") select += " -favourites";
 
     const data = await User.findOne({ _id: id }).select(select);
@@ -68,7 +69,26 @@ module.exports.create = async (req, res) => {
     const hashPassword = await bcrypt.hash(defaultPassword, salt);
 
     req.body.password = hashPassword;
-    const newUser = new User(req.body);
+
+    let newUser;
+    // checking avatar/files
+    if (req.files && req.files.length > 0) {
+      // using cloudinary.uploader.upload() to upload image in cloundinary
+      const result = await cloudinary.uploader.upload(req.files[0].path, {
+        width: 200, // setting width
+        height: 200, // setting height
+        crop: "thumb",
+        gravity: "auto"
+      });
+
+      req.body.avatar = result.secure_url;
+      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
+
+      newUser = new User(req.body);
+    } else {
+      newUser = new User(req.body);
+    }
+
     await newUser.save();
 
     return successResponse(res, null, "Create user successfully");
@@ -85,6 +105,21 @@ module.exports.edit = async (req, res) => {
     const user = await User.findOne({ _id: id });
     if (!user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "User does not exist");
 
+    // checking avatar/files
+    if (req.files && req.files.length > 0) {
+      // using cloudinary.uploader.upload() to upload image in cloundinary
+      const result = await cloudinary.uploader.upload(req.files[0].path, {
+        width: 200, // setting width
+        height: 200, // setting height
+        crop: "thumb",
+        gravity: "auto"
+      });
+
+      await cloudinary.uploader.destroy(user.cloudinary_id);
+      req.body.avatar = result.secure_url;
+      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
+    }
+
     await User.updateOne({ _id: id }, req.body);
 
     return successResponse(res, null, "Edit user successfully");
@@ -100,6 +135,8 @@ module.exports.delete = async (req, res) => {
 
     const user = await User.findOne({ _id: id });
     if (!user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "User does not exist");
+
+    if (user.avatar && user.cloudinary_id) await cloudinary.uploader.destroy(user.cloudinary_id);
 
     await User.deleteOne({ _id: id });
 

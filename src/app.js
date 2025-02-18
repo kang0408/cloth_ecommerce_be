@@ -24,6 +24,7 @@ app.use(cors());
 app.use(helmet());
 // parse json request body
 app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 // gzip compression
 app.use(compression());
 
