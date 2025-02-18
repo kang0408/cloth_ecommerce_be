@@ -19,6 +19,15 @@ module.exports.sendOtp = async (req, res) => {
     const time = 5;
     const expire = time * 60 * 1000;
 
+    const hasOtp = await Otp.findOne({ email: email });
+    if (hasOtp)
+      return errorResponse(
+        res,
+        null,
+        httpStatus.BAD_REQUEST,
+        `You only can send new otp after ${time} minutes`
+      );
+
     const newOtp = new Otp({
       email,
       otp,
