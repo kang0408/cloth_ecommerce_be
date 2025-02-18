@@ -9,7 +9,7 @@ const categorySchema = new mongoose.Schema(
     status: String,
     parentId: {
       type: Array,
-      default: []
+      default: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }]
     },
     deleted: {
       type: Boolean,

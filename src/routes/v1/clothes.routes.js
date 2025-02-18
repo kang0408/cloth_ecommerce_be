@@ -10,6 +10,8 @@ router.get("", controller.clothes);
 
 router.get("/details/:id", controller.details);
 
+router.get("/cate/:id", controller.clothesByCate);
+
 router.post("/create", middleware.auth(["admin"]), clothValidate.createCloth, controller.create);
 
 router.patch("/edit/:id", middleware.auth(["admin"]), clothValidate.editCloth, controller.edit);

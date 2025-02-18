@@ -17,7 +17,11 @@ const clothSchema = new mongoose.Schema(
       type: Boolean,
       default: false
     },
-    deletedAt: Date
+    deletedAt: Date,
+    cateId: {
+      type: Array,
+      default: []
+    }
   },
   {
     timestamps: true

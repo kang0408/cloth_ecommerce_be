@@ -16,7 +16,8 @@ module.exports.createCloth = async (req, res, next) => {
       "number.min": "Invalid stock quantity."
     }),
     thumbnail: baseJoi.string(),
-    status: baseJoi.string().valid("active", "inactive").optional()
+    status: baseJoi.string().valid("active", "inactive").optional(),
+    cateId: baseJoi.array().optional()
   });
 
   const response = clothSchema.validate(req.body);
@@ -42,7 +43,8 @@ module.exports.editCloth = async (req, res, next) => {
       "number.min": "Invalid stock quantity."
     }),
     thumbnail: baseJoi.string(),
-    status: baseJoi.string().valid("active", "inactive").optional()
+    status: baseJoi.string().valid("active", "inactive").optional(),
+    cateId: baseJoi.array().optional()
   });
 
   const response = clothSchema.validate(req.body);

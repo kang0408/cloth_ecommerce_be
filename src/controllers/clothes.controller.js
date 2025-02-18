@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { default: httpStatus } = require("http-status");
 
 const paginationHandler = require("../helpers/pagination.helper");
@@ -5,6 +6,7 @@ const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
 
 const Cloth = require("../models/clothes.model");
+const Cate = require("../models/category.model");
 
 // [GET] api/v1/clothes
 module.exports.clothes = async (req, res) => {
@@ -49,6 +51,10 @@ module.exports.clothes = async (req, res) => {
 // [POST] api/v1/clothes/create
 module.exports.create = async (req, res) => {
   try {
+    const { cateId = [] } = req.body;
+    const objectIdArr = cateId.map((id) => new mongoose.Types.ObjectId(id));
+
+    req.body.cateId = objectIdArr;
     req.body.createdAt = new Date();
     const newCloth = new Cloth(req.body);
     const data = await newCloth.save();
@@ -72,6 +78,11 @@ module.exports.edit = async (req, res) => {
     if (!cloth) {
       return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
+
+    const { cateId = [] } = req.body;
+    const objectIdArr = cateId.map((id) => new mongoose.Types.ObjectId(id));
+
+    req.body.cateId = objectIdArr;
 
     // Cập nhật quần áo
     const result = await Cloth.updateOne({ _id: id }, req.body);
@@ -133,6 +144,50 @@ module.exports.details = async (req, res) => {
     }
 
     return successResponse(res, cloth, "Get details cloth successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+// [GET] api/v1/clothes/cate/:id
+module.exports.clothesByCate = async (req, res) => {
+  try {
+    const { id } = req.params;
+    console.log(id);
+
+    // Sort
+    const { sortBy, sortValue } = req.query;
+    const sort = sortHandler(req.query);
+    if (sortBy) {
+      if (sortBy.toLowerCase() === "like" || sortBy.toLowerCase() === "dislike")
+        sort[`rating.${sortBy.toLowerCase()}`] = sortValue === "asc" ? 1 : -1;
+    }
+
+    // Pagination
+    const paginationDefault = { currentPage: 1, limitPage: 5 };
+    const pageTotal = await Cloth.countDocuments({
+      cateId: { $in: [new mongoose.Types.ObjectId(id)] }
+    });
+    const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
+
+    const cate = await Cate.findOne({ _id: id });
+    if (!cate) return errorResponse(res, null, httpStatus.NOT_FOUND, "Category not found");
+
+    const clothes = await Cloth.find({ cateId: { $in: [new mongoose.Types.ObjectId(id)] } })
+      .skip(paginationObject.offset)
+      .limit(paginationObject.limitPage)
+      .sort(sort)
+      .select("-__v");
+
+    return successResponse(
+      res,
+      {
+        clothes,
+        totalPages: paginationObject.totalPage,
+        currentPage: paginationObject.currentPage
+      },
+      "Get all clothes successfully"
+    );
   } catch (error) {
     return errorResponse(res, error);
   }
