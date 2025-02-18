@@ -1,3 +1,5 @@
+const { default: httpStatus } = require("http-status");
+
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
 const { successResponse, errorResponse } = require("../helpers/response.helper");
@@ -68,7 +70,7 @@ module.exports.edit = async (req, res) => {
     // Tìm quần áo trước khi cập nhật
     const cloth = await Cloth.findById(id);
     if (!cloth) {
-      return errorResponse(res, null, 404, "Cloth not found");
+      return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
 
     // Cập nhật quần áo
@@ -76,7 +78,7 @@ module.exports.edit = async (req, res) => {
 
     // Kiểm tra xem có gì thay đổi không
     if (result.modifiedCount === 0) {
-      return errorResponse(res, null, 400, "No changes applied");
+      return errorResponse(res, null, httpStatus.BAD_REQUEST, "No changes applied");
     }
 
     const data = await Cloth.findById(id);
@@ -99,7 +101,7 @@ module.exports.delete = async (req, res) => {
     });
 
     if (!cloth) {
-      return errorResponse(res, null, 404, "Cloth not found or already deleted");
+      return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found or already deleted");
     }
 
     if (sortType === "soft") {
@@ -127,7 +129,7 @@ module.exports.details = async (req, res) => {
 
     const cloth = await Cloth.findById(id);
     if (!cloth) {
-      return errorResponse(res, null, 404, "Cloth not found");
+      return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
 
     return successResponse(res, cloth, "Get details cloth successfully");

@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const { default: httpStatus } = require("http-status");
 
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
@@ -82,7 +83,7 @@ module.exports.details = async (req, res) => {
 
     const cate = await Category.findOne({ _id: id, deleted: false });
     if (!cate) {
-      return errorResponse(res, null, 404, "Category not found");
+      return errorResponse(res, null, httpStatus.NOT_FOUND, "Category not found");
     }
 
     return successResponse(res, cate, "Get details cloth successfully");
@@ -102,7 +103,7 @@ module.exports.edit = async (req, res) => {
     });
 
     if (!cate) {
-      return errorResponse(res, null, 404, "Category not found");
+      return errorResponse(res, null, httpStatus.NOT_FOUND, "Category not found");
     }
 
     const { parentId = [] } = req.body;
@@ -114,7 +115,7 @@ module.exports.edit = async (req, res) => {
     const result = await Category.updateOne({ _id: id }, req.body);
 
     if (result.modifiedCount === 0) {
-      return errorResponse(res, null, 400, "No changes applied");
+      return errorResponse(res, null, httpStatus.BAD_REQUEST, "No changes applied");
     }
 
     const data = await Category.findOne({
@@ -161,7 +162,12 @@ module.exports.delete = async (req, res) => {
     });
 
     if (!cate) {
-      return errorResponse(res, null, 404, "Category not found or already deleted");
+      return errorResponse(
+        res,
+        null,
+        httpStatus.NOT_FOUND,
+        "Category not found or already deleted"
+      );
     }
 
     if (sortType === "sort") {

@@ -1,5 +1,6 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const { default: httpStatus } = require("http-status");
 
 const User = require("../models/users.model");
 const Otp = require("../models/otps.model");
@@ -13,7 +14,7 @@ module.exports.register = async (req, res) => {
     const { username, email, password, role } = req.body;
 
     const user = await User.findOne({ email: email });
-    if (user) return errorResponse(res, null, 409, "Email already exist");
+    if (user) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Email already exist");
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(password, salt);
@@ -29,7 +30,7 @@ module.exports.register = async (req, res) => {
 
     return successResponse(res, null, "Register successfully");
   } catch (error) {
-    return errorResponse(res, error, 400, "Register fail");
+    return errorResponse(res, error);
   }
 };
 
@@ -39,10 +40,11 @@ module.exports.login = async (req, res) => {
     const { email, password } = req.body;
 
     const user = await User.findOne({ email: email });
-    if (!user) return errorResponse(res, null, 404, "Email does not exist");
+    if (!user) return errorResponse(res, null, httpStatus.NOT_FOUND, "Email does not exist");
 
     const isMatch = await bcrypt.compare(password, user.password);
-    if (!isMatch) return errorResponse(res, null, 400, "Password is not correct");
+    if (!isMatch)
+      return errorResponse(res, null, httpStatus.BAD_REQUEST, "Password is not correct");
 
     const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
       expiresIn: "3d"
@@ -71,7 +73,7 @@ module.exports.forgot = async (req, res) => {
 
     const user = await User.findOne({ email: email });
 
-    if (!user) return errorResponse(res, null, 404, "Email does not exist");
+    if (!user) return errorResponse(res, null, httpStatus.NOT_FOUND, "Email does not exist");
 
     const otp = Math.floor(100000 + Math.random() * 900000);
     const time = 5;
@@ -105,10 +107,10 @@ module.exports.reset = async (req, res) => {
     const { verifyToken, newPassword } = req.body;
 
     const decoded = jwt.verify(verifyToken, process.env.JWT_SECRET);
-    if (!decoded) return errorResponse(res, error, 400, "Token is not valid");
+    if (!decoded) return errorResponse(res, error, httpStatus.BAD_REQUEST, "Token is not valid");
 
     const user = await User.findOne({ email: decoded.email });
-    if (!user) return errorResponse(res, null, 400, "Email does not exist");
+    if (!user) return errorResponse(res, null, httpStatus.NOT_FOUND, "Email does not exist");
 
     const salt = await bcrypt.genSalt(10);
     const hashPassword = await bcrypt.hash(newPassword, salt);
@@ -129,10 +131,11 @@ module.exports.change = async (req, res) => {
     const { oldPassword, newPassword } = req.body;
 
     const user = await User.findOne({ _id: req.user.id });
-    if (!user) return errorResponse(res, null, 400, "Email does not exist");
+    if (!user) return errorResponse(res, null, httpStatus.NOT_FOUND, "Email does not exist");
 
     const isMatch = await bcrypt.compare(oldPassword, user.password);
-    if (!isMatch) return errorResponse(res, null, 400, "Old password is not correct");
+    if (!isMatch)
+      return errorResponse(res, null, httpStatus.BAD_REQUEST, "Old password is not correct");
 
     const salt = await bcrypt.genSalt(10);
     const hashNewPassword = await bcrypt.hash(newPassword, salt);

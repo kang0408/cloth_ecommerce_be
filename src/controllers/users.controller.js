@@ -1,4 +1,5 @@
 const bcrypt = require("bcrypt");
+const { default: httpStatus } = require("http-status");
 
 const User = require("../models/users.model");
 
@@ -59,7 +60,7 @@ module.exports.create = async (req, res) => {
     const { email } = req.body;
 
     const user = await User.findOne({ email: email });
-    if (user) return errorResponse(res, error, 400, "Email is existed");
+    if (user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "Email is existed");
 
     const defaultPassword = "Abc@12345";
 
@@ -82,7 +83,7 @@ module.exports.edit = async (req, res) => {
     const { id } = req.params;
 
     const user = await User.findOne({ _id: id });
-    if (!user) return errorResponse(res, error, 400, "User does not exist");
+    if (!user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "User does not exist");
 
     await User.updateOne({ _id: id }, req.body);
 
@@ -98,7 +99,7 @@ module.exports.delete = async (req, res) => {
     const { id } = req.params;
 
     const user = await User.findOne({ _id: id });
-    if (!user) return errorResponse(res, error, 400, "User does not exist");
+    if (!user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "User does not exist");
 
     await User.deleteOne({ _id: id });
 

@@ -1,4 +1,5 @@
 const jwt = require("jsonwebtoken");
+const { default: httpStatus } = require("http-status");
 
 const User = require("../models/users.model");
 const Otp = require("../models/otps.model");
@@ -12,7 +13,7 @@ module.exports.sendOtp = async (req, res) => {
     const { email } = req.body;
 
     const isExist = await User.findOne({ email: email });
-    if (!isExist) return errorResponse(res, null, 404, "Email does not exist");
+    if (!isExist) return errorResponse(res, null, httpStatus.NOT_FOUND, "Email does not exist");
 
     const otp = Math.floor(100000 + Math.random() * 900000);
     const time = 5;
@@ -46,10 +47,10 @@ module.exports.verifyOtp = async (req, res) => {
     const { email, otp } = req.body;
 
     const otpRecord = await Otp.findOne({ email: email, otp: otp });
-    if (!otpRecord) return errorResponse(res, null, 400, "OTP is not valid");
+    if (!otpRecord) return errorResponse(res, null, httpStatus.BAD_REQUEST, "OTP is not valid");
 
     if (otpRecord.expiresAt < new Date()) {
-      return errorResponse(res, null, 400, "OTP is expired");
+      return errorResponse(res, null, httpStatus.BAD_REQUEST, "OTP is expired");
     }
 
     await Otp.deleteOne({ _id: otpRecord._id });
