@@ -11,7 +11,8 @@ module.exports.create = async (req, res, next) => {
       email: baseJoi.string().email().required().messages({
         "string.email": "Invalid email format"
       }),
-      role: baseJoi.string().valid("user", "admin").optional()
+      role: baseJoi.string().valid("user", "admin").optional(),
+      avatar: baseJoi.string().optional()
     });
 
     const response = userSchema.validate(req.body);

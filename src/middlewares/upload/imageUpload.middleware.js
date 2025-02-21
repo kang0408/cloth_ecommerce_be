@@ -8,7 +8,7 @@ const imageUpload = (req, res, next) => {
     // sending file mime types
     ["image/jpeg", "image/jpg", "image/png"],
     // maximum file size
-    10000000,
+    10 * 2024 * 2024,
     // maximum file number
     1,
     // error message
@@ -25,7 +25,7 @@ const imageUpload = (req, res, next) => {
       // sending json error response
       res.status(httpStatus.INTERNAL_SERVER_ERROR).json({
         errors: {
-          avatar: {
+          error: {
             msg: err.message
           }
         }

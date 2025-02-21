@@ -1,7 +1,9 @@
 const bcrypt = require("bcrypt");
 const { default: httpStatus } = require("http-status");
+const mongoose = require("mongoose");
 
 const User = require("../models/users.model");
+const Wishlist = require("../models/wishlist.model");
 
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
@@ -58,10 +60,11 @@ module.exports.profile = async (req, res) => {
 // [POST] api/v1/users/create
 module.exports.create = async (req, res) => {
   try {
+    console.log(req.body);
     const { email } = req.body;
 
     const user = await User.findOne({ email: email });
-    if (user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "Email is existed");
+    if (user) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Email is existed");
 
     const defaultPassword = "Abc@12345";
 
@@ -71,7 +74,6 @@ module.exports.create = async (req, res) => {
     req.body.password = hashPassword;
 
     let newUser;
-    // checking avatar/files
     if (req.files && req.files.length > 0) {
       // using cloudinary.uploader.upload() to upload image in cloundinary
       const result = await cloudinary.uploader.upload(req.files[0].path, {
@@ -90,6 +92,18 @@ module.exports.create = async (req, res) => {
     }
 
     await newUser.save();
+
+    const wishlist = await Wishlist.findOne({ userId: newUser._id });
+
+    if (!wishlist) {
+      const objId = new mongoose.Types.ObjectId(newUser._id);
+      const newWishlist = new Wishlist({
+        userId: objId,
+        wishlist: []
+      });
+
+      await newWishlist.save();
+    }
 
     return successResponse(res, null, "Create user successfully");
   } catch (error) {

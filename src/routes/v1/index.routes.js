@@ -5,6 +5,7 @@ const categoriesRoutes = require("./categories.routes");
 const authRoutes = require("./auth.routes");
 const userRoutes = require("./users.routes");
 const otpsRoutes = require("./otps.routes");
+const wishlistsRoutes = require("./wishlists.routes");
 
 module.exports = (app) => {
   app.use(prefixVersion + "/clothes", clothesRoutes);
@@ -12,4 +13,5 @@ module.exports = (app) => {
   app.use(prefixVersion + "/auth", authRoutes);
   app.use(prefixVersion + "/users", userRoutes);
   app.use(prefixVersion + "/otp", otpsRoutes);
+  app.use(prefixVersion + "/wishlists", wishlistsRoutes);
 };

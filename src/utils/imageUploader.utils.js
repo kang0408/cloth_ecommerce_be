@@ -1,26 +1,25 @@
 const multer = require("multer");
-
 const accountStorage = require("../configs/cloudinaryAccountStorage");
 
-// creating a universal image uploader
-const imageUploader = (allowed_file_types, max_file_size, max_number_of_upload_file, error_msg) => {
-  // prepare final multer upload object
+const imageUploader = (allowedFileTypes, maxFileSize, maxNumberOfFiles, errorMsg) => {
   const upload = multer({
-    // setting multer engine storage using cloudinary
-    storage: accountStorage,
-    // limiting file size for upload
-    limits: {
-      fileSize: max_file_size
-    },
-    // filtering file avoid to malicious file upload
+    storage: accountStorage, // Cloudinary storage
+    limits: { fileSize: maxFileSize }, // Giới hạn kích thước file
     fileFilter: (req, file, cb) => {
-      // checking total uploadiing image number
-      if (req.files.length > max_number_of_upload_file) {
-        cb(new Error(`Maximum ${max_number_of_upload_file} files are allowed to upload!`));
+      // Kiểm tra req.files có tồn tại hay chưa
+      if (!req.files) req.files = [];
+
+      // Kiểm tra số lượng file upload
+      if (req.files.length > maxNumberOfFiles) {
+        return cb(new Error(`Maximum ${maxNumberOfFiles} files are allowed to upload!`));
+      }
+
+      // Kiểm tra loại file hợp lệ
+      if (allowedFileTypes.includes(file.mimetype)) {
+        req.files.push(file); // Lưu file vào req.files
+        cb(null, true);
       } else {
-        // checking file types for every file
-        if (allowed_file_types.includes(file.mimetype)) cb(null, true);
-        else cb(new Error(error_msg));
+        cb(new Error(errorMsg));
       }
     }
   });
