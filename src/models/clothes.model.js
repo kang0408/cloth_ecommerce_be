@@ -22,10 +22,7 @@ const clothSchema = new mongoose.Schema(
       default: false
     },
     deletedAt: Date,
-    cateId: {
-      type: Array,
-      default: []
-    }
+    categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }]
   },
   {
     timestamps: true

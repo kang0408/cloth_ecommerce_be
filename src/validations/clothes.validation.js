@@ -17,7 +17,7 @@ module.exports.createCloth = async (req, res, next) => {
     }),
     thumbnail: baseJoi.string(),
     status: baseJoi.string().valid("active", "inactive").optional(),
-    cateId: baseJoi.array().optional()
+    categories: baseJoi.array().optional()
   });
 
   const response = clothSchema.validate(req.body);
@@ -44,7 +44,7 @@ module.exports.editCloth = async (req, res, next) => {
     }),
     thumbnail: baseJoi.string(),
     status: baseJoi.string().valid("active", "inactive").optional(),
-    cateId: baseJoi.array().optional()
+    categories: baseJoi.string().optional()
   });
 
   const response = clothSchema.validate(req.body);

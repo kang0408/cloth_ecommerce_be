@@ -30,6 +30,7 @@ module.exports.clothes = async (req, res) => {
     const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
 
     const clothes = await Cloth.find(find)
+      .populate("categories", "_id name")
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)
@@ -52,10 +53,10 @@ module.exports.clothes = async (req, res) => {
 // [POST] api/v1/clothes/create
 module.exports.create = async (req, res) => {
   try {
-    const { cateId = [] } = req.body;
-    const objectIdArr = cateId.map((id) => new mongoose.Types.ObjectId(id));
+    const categories = req.body.categories.split(",");
+    const objectIdArr = categories.map((id) => new mongoose.Types.ObjectId(id.trim()));
 
-    req.body.cateId = objectIdArr;
+    req.body.categories = objectIdArr;
     req.body.createdAt = new Date();
 
     let newCloth;
@@ -99,10 +100,10 @@ module.exports.edit = async (req, res) => {
       return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
 
-    const { cateId = [] } = req.body;
-    const objectIdArr = cateId.map((id) => new mongoose.Types.ObjectId(id));
+    const categories = req.body.categories.split(",");
+    const objectIdArr = categories.map((id) => new mongoose.Types.ObjectId(id.trim()));
 
-    req.body.cateId = objectIdArr;
+    req.body.categories = objectIdArr;
     // checking avatar/files
     if (req.files && req.files.length > 0) {
       // using cloudinary.uploader.upload() to upload image in cloundinary
@@ -113,7 +114,8 @@ module.exports.edit = async (req, res) => {
         gravity: "auto"
       });
 
-      await cloudinary.uploader.destroy(cloth.cloudinary_id);
+      if (cloth.cloudinary_id) await cloudinary.uploader.destroy(cloth.cloudinary_id);
+
       req.body.thumbnail = result.secure_url;
       req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
     }
@@ -174,7 +176,9 @@ module.exports.details = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const cloth = await Cloth.findById(id).select("-cloudinary_id");
+    const cloth = await Cloth.findById(id)
+      .populate("categories", "_id name")
+      .select("-cloudinary_id");
     if (!cloth) {
       return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
@@ -201,14 +205,14 @@ module.exports.clothesByCate = async (req, res) => {
     // Pagination
     const paginationDefault = { currentPage: 1, limitPage: 5 };
     const pageTotal = await Cloth.countDocuments({
-      cateId: { $in: [new mongoose.Types.ObjectId(id)] }
+      categories: { $in: [new mongoose.Types.ObjectId(id)] }
     });
     const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
 
     const cate = await Cate.findOne({ _id: id });
     if (!cate) return errorResponse(res, null, httpStatus.NOT_FOUND, "Category not found");
 
-    const clothes = await Cloth.find({ cateId: { $in: [new mongoose.Types.ObjectId(id)] } })
+    const clothes = await Cloth.find({ categories: { $in: [new mongoose.Types.ObjectId(id)] } })
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)
