@@ -60,7 +60,6 @@ module.exports.profile = async (req, res) => {
 // [POST] api/v1/users/create
 module.exports.create = async (req, res) => {
   try {
-    console.log(req.body);
     const { email } = req.body;
 
     const user = await User.findOne({ email: email });
