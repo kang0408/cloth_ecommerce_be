@@ -30,9 +30,8 @@ const imageUpload = (req, res, next) => {
           }
         }
       });
-    } else {
-      next();
     }
+    next();
   });
 };
 

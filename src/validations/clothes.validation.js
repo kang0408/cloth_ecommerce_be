@@ -17,7 +17,7 @@ module.exports.createCloth = async (req, res, next) => {
     }),
     thumbnail: baseJoi.string(),
     status: baseJoi.string().valid("active", "inactive").optional(),
-    categories: baseJoi.array().optional()
+    categories: baseJoi.string().optional()
   });
 
   const response = clothSchema.validate(req.body);

@@ -53,29 +53,31 @@ module.exports.clothes = async (req, res) => {
 // [POST] api/v1/clothes/create
 module.exports.create = async (req, res) => {
   try {
-    const categories = req.body.categories.split(",");
-    const objectIdArr = categories.map((id) => new mongoose.Types.ObjectId(id.trim()));
+    if (req.body.categories) {
+      const categories = req.body.categories.split(",");
+      const objectIdArr = categories.map((id) => new mongoose.Types.ObjectId(id.trim()));
 
-    req.body.categories = objectIdArr;
+      req.body.categories = objectIdArr;
+    }
     req.body.createdAt = new Date();
 
     let newCloth;
     // checking avatar/files
     if (req.files && req.files.length > 0) {
       // using cloudinary.uploader.upload() to upload image in cloundinary
-      const result = await cloudinary.uploader.upload(req.files[0].path, {
-        width: 200, // setting width
-        height: 200, // setting height
-        crop: "thumb",
-        gravity: "auto"
-      });
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${req.files[0].buffer.toString("base64")}`,
+        {
+          folder: "clothes-management/clothes",
+          resource_type: "image"
+        }
+      );
 
       req.body.thumbnail = result.secure_url;
-      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
-      newCloth = new Cloth(req.body);
-    } else {
-      newCloth = new Cloth(req.body);
+      req.body.cloudinary_id = result.public_id;
     }
+
+    newCloth = new Cloth(req.body);
 
     const data = await newCloth.save();
 
@@ -100,24 +102,27 @@ module.exports.edit = async (req, res) => {
       return errorResponse(res, null, httpStatus.NOT_FOUND, "Cloth not found");
     }
 
-    const categories = req.body.categories.split(",");
-    const objectIdArr = categories.map((id) => new mongoose.Types.ObjectId(id.trim()));
+    if (req.body.categories) {
+      const categories = req.body.categories.split(",");
+      const objectIdArr = categories.map((id) => new mongoose.Types.ObjectId(id.trim()));
 
-    req.body.categories = objectIdArr;
+      req.body.categories = objectIdArr;
+    }
+
+    if (cloth.cloudinary_id) await cloudinary.uploader.destroy(cloth.cloudinary_id);
+
     // checking avatar/files
     if (req.files && req.files.length > 0) {
       // using cloudinary.uploader.upload() to upload image in cloundinary
-      const result = await cloudinary.uploader.upload(req.files[0].path, {
-        width: 200, // setting width
-        height: 200, // setting height
-        crop: "thumb",
-        gravity: "auto"
-      });
-
-      if (cloth.cloudinary_id) await cloudinary.uploader.destroy(cloth.cloudinary_id);
-
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${req.files[0].buffer.toString("base64")}`,
+        {
+          folder: "clothes-management/clothes",
+          resource_type: "image"
+        }
+      );
       req.body.thumbnail = result.secure_url;
-      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
+      req.body.cloudinary_id = result.public_id;
     }
 
     // Cập nhật quần áo

@@ -75,20 +75,18 @@ module.exports.create = async (req, res) => {
     let newUser;
     if (req.files && req.files.length > 0) {
       // using cloudinary.uploader.upload() to upload image in cloundinary
-      const result = await cloudinary.uploader.upload(req.files[0].path, {
-        width: 200, // setting width
-        height: 200, // setting height
-        crop: "thumb",
-        gravity: "auto"
-      });
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${req.files[0].buffer.toString("base64")}`,
+        {
+          folder: "clothes-management/users",
+          resource_type: "image"
+        }
+      );
 
       req.body.avatar = result.secure_url;
-      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
-
-      newUser = new User(req.body);
-    } else {
-      newUser = new User(req.body);
+      req.body.cloudinary_id = result.public_id;
     }
+    newUser = new User(req.body);
 
     await newUser.save();
 
@@ -118,19 +116,21 @@ module.exports.edit = async (req, res) => {
     const user = await User.findOne({ _id: id });
     if (!user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "User does not exist");
 
+    if (user.cloudinary_id) await cloudinary.uploader.destroy(user.cloudinary_id);
+
     // checking avatar/files
     if (req.files && req.files.length > 0) {
       // using cloudinary.uploader.upload() to upload image in cloundinary
-      const result = await cloudinary.uploader.upload(req.files[0].path, {
-        width: 200, // setting width
-        height: 200, // setting height
-        crop: "thumb",
-        gravity: "auto"
-      });
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${req.files[0].buffer.toString("base64")}`,
+        {
+          folder: "clothes-management/users",
+          resource_type: "image"
+        }
+      );
 
-      await cloudinary.uploader.destroy(user.cloudinary_id);
       req.body.avatar = result.secure_url;
-      req.body.cloudinary_id = `clothes_management/${result.original_filename}`;
+      req.body.cloudinary_id = result.public_id;
     }
 
     await User.updateOne({ _id: id }, req.body);
