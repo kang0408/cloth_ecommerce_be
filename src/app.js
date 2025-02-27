@@ -9,6 +9,7 @@ require("dotenv").config();
 
 const router = require("./routes/v1/index.routes");
 const database = require("./configs/database");
+const swaggerDocs = require("./swagger");
 
 // connect to database
 database.connect();
@@ -30,6 +31,9 @@ app.use(compression());
 
 // router
 router(app);
+
+// swagger
+swaggerDocs(app);
 
 // catch all wildcard
 app.all("*", (req, res) => {
