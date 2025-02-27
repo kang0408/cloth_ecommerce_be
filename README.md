@@ -68,6 +68,13 @@ Create a `.env` file in the root directory and configure:
 PORT=5000
 MONGO_URI=your-mongodb-connection-string
 JWT_SECRET=your-secret-key
+
+EMAIL_USER=your-email
+EMAIL_PASS=your-email-pass
+
+CLOUDINARY_NAME=your-cloudinary-name
+CLOUDINARY_API_KEY=your-cloudinary-api-key
+CLOUDINARY_API_SECRET=your-cloudinary-api-secret
 ```
 
 #### 4️⃣ Run the Project
