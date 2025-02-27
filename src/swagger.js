@@ -16,6 +16,10 @@ const options = {
       {
         url: `http://localhost:${PORT}`,
         description: "Local server"
+      },
+      {
+        url: "https://cloth-management-be.onrender.com/api/v1",
+        description: "Render Deployment"
       }
     ],
     components: {

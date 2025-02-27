@@ -8,7 +8,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/v1/auth/register:
+ * /auth/register:
  *  post:
  *    summary: Register a new user
  *    description: API for registering a new account
@@ -61,7 +61,7 @@ router.post("/register", authValidate.register, controller.register);
 
 /**
  * @swagger
- * /api/v1/auth/login:
+ * /auth/login:
  *  post:
  *    summary: Login by email
  *    description: API for user to login
@@ -110,7 +110,7 @@ router.post("/login", authValidate.login, controller.login);
 
 /**
  * @swagger
- * /api/v1/auth/forgot-password:
+ * /auth/forgot-password:
  *  post:
  *    summary: Send request to reset a password
  *    description: API for forgot password
@@ -152,7 +152,7 @@ router.post("/forgot-password", authValidate.forgot, controller.forgot);
 
 /**
  * @swagger
- * /api/v1/auth/reset-password:
+ * /auth/reset-password:
  *  post:
  *    summary: Reset a password
  *    description: API for reseting a password
@@ -198,7 +198,7 @@ router.post("/reset-password", authValidate.reset, controller.reset);
 
 /**
  * @swagger
- * /api/v1/auth/change-password:
+ * /auth/change-password:
  *  post:
  *    summary: Change user password
  *    description: API for changing the user's password (requires authentication)
