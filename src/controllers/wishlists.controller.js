@@ -14,7 +14,7 @@ module.exports.getAll = async (req, res) => {
       .select("-__v -userId")
       .exec();
 
-    if (!list) return errorResponse(res, null, httpStatus.BAD_REQUEST, "User not found");
+    if (!list) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Wishlists not found");
 
     return successResponse(res, list, "Get wishlist successfully");
   } catch (error) {
@@ -29,7 +29,7 @@ module.exports.add = async (req, res) => {
     const { id: userId } = req.user;
     const list = await Wishlist.findOne({ userId: userId });
 
-    if (!list) return errorResponse(res, null, httpStatus.BAD_REQUEST, "User not found");
+    if (!list) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Wishlists not found");
 
     list.wishlist.push(new mongoose.Types.ObjectId(id));
 

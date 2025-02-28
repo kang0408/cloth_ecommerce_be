@@ -81,7 +81,7 @@ module.exports.details = async (req, res) => {
   try {
     const id = req.params.id;
 
-    const cate = await Category.findOne({ _id: id, deleted: false });
+    const cate = await Category.findOne({ _id: id, deleted: false }).select("-__v");
     if (!cate) {
       return errorResponse(res, null, httpStatus.NOT_FOUND, "Category not found");
     }

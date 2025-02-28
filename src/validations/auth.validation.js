@@ -98,7 +98,7 @@ module.exports.reset = async (req, res, next) => {
           }
           return value;
         }),
-      verifyToken: baseJoi.string().optional()
+      verifyToken: baseJoi.string().required()
     });
 
     const response = userSchema.validate(req.body);

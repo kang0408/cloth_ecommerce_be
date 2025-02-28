@@ -12,7 +12,7 @@ module.exports.getCart = async (req, res) => {
     const { id: userId } = req.user;
     const cart = await Cart.findOne({ userId })
       .populate("items.productId", "-cloudinary_id -__v")
-      .select("-__v");
+      .select("-__v -userId");
     if (!cart) return errorResponse(res, null, httpStatus.NOT_FOUND, "Cart not found");
 
     return successResponse(res, cart, "Get cart successfully");

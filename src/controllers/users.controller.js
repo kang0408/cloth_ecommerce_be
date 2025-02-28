@@ -25,7 +25,7 @@ module.exports.users = async (req, res) => {
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)
-      .select("-__v -password -cloudinary_id");
+      .select("-__v -password -cloudinary_id -favourites");
 
     return successResponse(
       res,

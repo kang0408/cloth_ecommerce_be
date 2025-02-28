@@ -1,4 +1,5 @@
 const baseJoi = require("./base.joi");
+const { default: httpStatus } = require("http-status");
 const { errorResponse } = require("../helpers/response.helper");
 
 module.exports.createCloth = async (req, res, next) => {
@@ -22,7 +23,7 @@ module.exports.createCloth = async (req, res, next) => {
 
   const response = clothSchema.validate(req.body);
 
-  if (response.error) return errorResponse(res, response.error);
+  if (response.error) return errorResponse(res, response.error, httpStatus.BAD_REQUEST);
   else {
     next();
   }

@@ -14,13 +14,13 @@ module.exports.auth =
         return errorResponse(
           res,
           null,
-          httpStatus.BAD_REQUEST,
+          httpStatus.UNAUTHORIZED,
           "Access Denied. Please login or register account"
         );
 
       const tokenParts = token.split(" ");
       if (tokenParts.length !== 2 || tokenParts[0] !== "Bearer") {
-        return res.status(httpStatus.BAD_REQUEST).json({ message: "Invalid token format" });
+        return res.status(httpStatus.UNAUTHORIZED).json({ message: "Invalid token format" });
       }
 
       const tokenValue = tokenParts[1];
@@ -28,10 +28,15 @@ module.exports.auth =
 
       const user = await User.findOne({ _id: decoded.id });
       if (!user)
-        return errorResponse(res, null, httpStatus.BAD_REQUEST, "Please login or register account");
+        return errorResponse(
+          res,
+          null,
+          httpStatus.UNAUTHORIZED,
+          "Please login or register account"
+        );
 
       if (!roles.includes(decoded.role))
-        return errorResponse(res, null, httpStatus.BAD_REQUEST, "Access Denied");
+        return errorResponse(res, null, httpStatus.UNAUTHORIZED, "Access Denied");
 
       req.user = decoded;
 

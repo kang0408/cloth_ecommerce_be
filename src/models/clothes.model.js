@@ -6,7 +6,10 @@ const clothSchema = new mongoose.Schema(
     description: String,
     price: Number,
     discountPercentage: Number,
-    stock: Number,
+    stock: {
+      type: Number,
+      default: 0
+    },
     thumbnail: String,
     cloudinary_id: String,
     status: {
