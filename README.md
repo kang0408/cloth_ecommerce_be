@@ -22,6 +22,9 @@ The **Clothes Management** backend is a Node.js-based application designed to ma
 - **Validation**: Joi
 - **Logging**: Morgan
 - **Environment Management**: Dotenv
+- **Image Storage**: Cloudinary
+- **Uploader**: Multer
+- **API Document**: Swagger
 
 ### 📂 Project Structure
 
@@ -38,6 +41,7 @@ cloth-management/
 │   ├── validation/    # Data validation logic
 │   ├── app.js         # Express app initialization
 │   ├── server.js      # Server entry point (listens on a port)
+│   ├── swagger.js     # Swagger ui initialization
 │── .env               # Environment variables
 │── .gitignore         # Git ignore file
 │── package.json       # Project dependencies and scripts
@@ -93,12 +97,7 @@ npm start
 
 ### 🔥 API Endpoints
 
-_(More endpoints will be documented soon)_
-
-### ✅ To-Do List
-
-- [ ] Complete CRUD for **Clothes**
-- [ ] Complete CRUD for **Categories**
+[Swagger Document](https://cloth-management-be.onrender.com/api-docs/)
 
 ### 🏆 Contributions
 
