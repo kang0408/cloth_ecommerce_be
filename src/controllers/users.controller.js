@@ -3,7 +3,6 @@ const { default: httpStatus } = require("http-status");
 const mongoose = require("mongoose");
 
 const User = require("../models/users.model");
-const Wishlist = require("../models/wishlist.model");
 
 const paginationHandler = require("../helpers/pagination.helper");
 const sortHandler = require("../helpers/sort.helper");
@@ -106,18 +105,6 @@ module.exports.create = async (req, res) => {
     newUser = new User(req.body);
 
     await newUser.save();
-
-    const wishlist = await Wishlist.findOne({ userId: newUser._id });
-
-    if (!wishlist) {
-      const objId = new mongoose.Types.ObjectId(newUser._id);
-      const newWishlist = new Wishlist({
-        userId: objId,
-        wishlist: []
-      });
-
-      await newWishlist.save();
-    }
 
     return successResponse(res, null, "Create user successfully");
   } catch (error) {

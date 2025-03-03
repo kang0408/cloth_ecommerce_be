@@ -12,7 +12,7 @@ const router = express.Router();
  *     summary: Get user wishlist
  *     description: Retrieve the list of favorite products of the authenticated user.
  *     tags:
- *       - Wishlist
+ *       - Wishlists
  *     security:
  *       - bearerAuth: []
  *     responses:
@@ -109,7 +109,7 @@ router.get("", middleware.auth(["user", "admin"]), controller.getAll);
  *     summary: Add product to wishlist
  *     description: Add a product to the user's wishlist. Requires authentication.
  *     tags:
- *       - Wishlist
+ *       - Wishlists
  *     security:
  *       - bearerAuth: []
  *     parameters:
@@ -165,5 +165,109 @@ router.get("", middleware.auth(["user", "admin"]), controller.getAll);
  *         description: Internal server error.
  */
 router.post("/add/:id", middleware.auth(["user", "admin"]), controller.add);
+
+/**
+ * @swagger
+ * /wishlists/remove/{id}:
+ *   delete:
+ *     summary: Remove product from wishlist
+ *     description: Remove a product from the user's wishlist by product ID. Requires authentication.
+ *     tags:
+ *       - Wishlists
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The ID of the product to remove from the wishlist.
+ *         example: "67a57c2e54dd02487ee3e2fc"
+ *     responses:
+ *       200:
+ *         description: Successfully removed product from wishlist.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Cloth removed from wishlist"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *       400:
+ *         description: Bad request - Invalid product ID.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 400
+ *               message: "Invalid product ID"
+ *       401:
+ *         description: Unauthorized - User is not authenticated.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 401
+ *               message: "Access Denied. Please login or register account"
+ *       404:
+ *         description: Not found - Product does not exist in wishlist.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 404
+ *               message: "Product not found in wishlist"
+ *       500:
+ *         description: Internal server error.
+ */
+router.delete("/remove/:id", middleware.auth(["user", "admin"]), controller.remove);
+
+/**
+ * @swagger
+ * /wishlists/clear:
+ *   delete:
+ *     summary: Clear user wishlists
+ *     description: Remove all products from the user's shopping wishlists.
+ *     tags:
+ *       - Wishlists
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Wishlists cleared successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Wishlists cleared successfully"
+ *                 data:
+ *                   type: "null"
+ *                   example: null
+ *       401:
+ *         description: Unauthorized - User is not authenticated.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 401
+ *               message: "Access Denied. Please login or register account"
+ *       500:
+ *         description: Internal server error.
+ */
+router.delete("/clear", middleware.auth(["user", "admin"]), controller.clear);
 
 module.exports = router;
