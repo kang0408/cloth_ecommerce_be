@@ -210,7 +210,7 @@ module.exports.clothesByCate = async (req, res) => {
     // Pagination
     const paginationDefault = { currentPage: 1, limitPage: 5 };
     const pageTotal = await Cloth.countDocuments({
-      categories: { $in: [new mongoose.Types.ObjectId(id)] }
+      categories: { $in: { _id: id } }
     });
     const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
 

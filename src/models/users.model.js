@@ -19,7 +19,6 @@ const userSchema = new mongoose.Schema(
       enum: ["user", "admin"],
       default: "user"
     },
-    favourites: [{ type: mongoose.Schema.Types.ObjectId, ref: "Product" }],
     avatar: String,
     cloudinary_id: String
   },

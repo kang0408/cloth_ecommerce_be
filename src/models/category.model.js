@@ -5,7 +5,6 @@ const categorySchema = new mongoose.Schema(
     name: String,
     description: String,
     quantity: Number,
-    image: String,
     status: String,
     parentId: {
       type: Array,
