@@ -174,7 +174,81 @@ router.get("", middleware.auth(["admin"]), controller.users);
  *               code: 500
  *               message: "Internal server error"
  */
-router.get("/profile", middleware.auth(["user", "admin"]), controller.profile);
+router.get("/profile", middleware.auth(["user", "admin"]), controller.profileByAuth);
+
+/**
+ * @swagger
+ * /users/profile/{id}:
+ *   get:
+ *     summary: Get user profile by id
+ *     description: Retrieve the authenticated user's profile information by user id. Requires authentication.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - BearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: string
+ *         description: The unique identifier of the user.
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved user profile.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Get profile successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "67aeaf64d29a2d3cfebc34a7"
+ *                     username:
+ *                       type: string
+ *                       example: "kangtran4804"
+ *                     email:
+ *                       type: string
+ *                       example: "trandanhkhang482004@gmail.com"
+ *                     role:
+ *                       type: string
+ *                       enum: ["user", "admin"]
+ *                       example: "admin"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-14T02:50:12.931Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-14T02:50:12.931Z"
+ *       401:
+ *         description: Unauthorized - Missing or invalid token.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 401
+ *               message: "Access Denied. Please login or register account"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 500
+ *               message: "Internal server error"
+ */
+router.get("/profile/:id", middleware.auth(["admin"]), controller.profileById);
 
 /**
  * @swagger
@@ -341,12 +415,97 @@ router.post(
  *               code: 500
  *               message: "Internal server error"
  */
-router.post(
+router.patch(
   "/edit/:id",
   middleware.auth(["admin"]),
   imageUpload,
   userValidate.edit,
   controller.edit
+);
+
+/**
+ * @swagger
+ * /users/update-profile:
+ *   patch:
+ *     summary: Update user by auth
+ *     description: Update user details by providing new information. Requires authorication.
+ *     tags:
+ *       - Users
+ *     security:
+ *       - BearerAuth: []
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               username:
+ *                 type: string
+ *                 example: "updateduser123"
+ *               email:
+ *                 type: string
+ *                 format: email
+ *                 example: "updateduser@example.com"
+ *               avatar:
+ *                 type: string
+ *                 format: binary
+ *                 description: Upload a new profile picture for the user.
+ *     responses:
+ *       200:
+ *         description: User updated successfully.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "User updated successfully"
+ *                 data:
+ *                   example: null
+ *       400:
+ *         description: Invalid input data or Email is existed.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 400
+ *               message: "Invalid input data"
+ *       401:
+ *         description: Unauthorized - Missing or invalid token.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 401
+ *               message: "Access Denied. Please login or register account"
+ *       404:
+ *         description: User not found
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 404
+ *               message: "User not found"
+ *       500:
+ *         description: Internal server error.
+ *         content:
+ *           application/json:
+ *             example:
+ *               success: false
+ *               code: 500
+ *               message: "Internal server error"
+ */
+router.patch(
+  "/update-profile",
+  middleware.auth(["user", "admin"]),
+  imageUpload,
+  userValidate.edit,
+  controller.updateProfileByAuth
 );
 
 /**

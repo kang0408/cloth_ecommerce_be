@@ -42,9 +42,26 @@ module.exports.users = async (req, res) => {
 };
 
 // [GET] api/v1/users/profile
-module.exports.profile = async (req, res) => {
+module.exports.profileByAuth = async (req, res) => {
   try {
     const { id, role } = req.user;
+
+    let select = "-__v -password -cloudinary_id";
+    if (role === "admin") select += " -favourites";
+
+    const data = await User.findOne({ _id: id }).select(select);
+
+    return successResponse(res, data, "Get profile successfully");
+  } catch (error) {
+    return errorResponse(res, error, 500, "Get profile failure");
+  }
+};
+
+// [GET] api/v1/users/profile/:id
+module.exports.profileById = async (req, res) => {
+  try {
+    const { role } = req.user;
+    const { id } = req.params;
 
     let select = "-__v -password -cloudinary_id";
     if (role === "admin") select += " -favourites";
@@ -108,13 +125,13 @@ module.exports.create = async (req, res) => {
   }
 };
 
-// [POST] api/v1/users/edit/:id
+// [PATCH] api/v1/users/edit/:id
 module.exports.edit = async (req, res) => {
   try {
     const { id } = req.params;
 
     const user = await User.findOne({ _id: id });
-    if (!user) return errorResponse(res, error, httpStatus.BAD_REQUEST, "User does not exist");
+    if (!user) return errorResponse(res, error, httpStatus.NOT_FOUND, "User not found");
 
     if (user.cloudinary_id) await cloudinary.uploader.destroy(user.cloudinary_id);
 
@@ -136,6 +153,43 @@ module.exports.edit = async (req, res) => {
     await User.updateOne({ _id: id }, req.body);
 
     return successResponse(res, null, "Edit user successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
+// [PATCH] api/v1/users/update-profile
+module.exports.updateProfileByAuth = async (req, res) => {
+  try {
+    const { id } = req.user;
+    const { email } = req.body;
+
+    const user = await User.findOne({ _id: id });
+    if (!user) return errorResponse(res, error, httpStatus.NOT_FOUND, "User not found");
+
+    const isExisted = await User.findOne({ email: email });
+    if (isExisted) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Email is existed");
+
+    if (user.cloudinary_id) await cloudinary.uploader.destroy(user.cloudinary_id);
+
+    // checking avatar/files
+    if (req.files && req.files.length > 0) {
+      // using cloudinary.uploader.upload() to upload image in cloundinary
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${req.files[0].buffer.toString("base64")}`,
+        {
+          folder: "clothes-management/users",
+          resource_type: "image"
+        }
+      );
+
+      req.body.avatar = result.secure_url;
+      req.body.cloudinary_id = result.public_id;
+    }
+
+    await User.updateOne({ _id: id }, req.body);
+
+    return successResponse(res, null, "User updated successfully");
   } catch (error) {
     return errorResponse(res, error);
   }
