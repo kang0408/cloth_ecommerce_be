@@ -176,7 +176,9 @@ module.exports.updateProfileByAuth = async (req, res) => {
 
     await User.updateOne({ _id: id }, req.body);
 
-    return successResponse(res, null, "User updated successfully");
+    const data = await User.findOne({ _id: id }).select(select);
+
+    return successResponse(res, data, "User updated successfully");
   } catch (error) {
     return errorResponse(res, error);
   }
