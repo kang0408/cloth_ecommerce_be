@@ -176,6 +176,7 @@ module.exports.updateProfileByAuth = async (req, res) => {
 
     await User.updateOne({ _id: id }, req.body);
 
+    let select = "-__v -password -cloudinary_id";
     const data = await User.findOne({ _id: id }).select(select);
 
     return successResponse(res, data, "User updated successfully");

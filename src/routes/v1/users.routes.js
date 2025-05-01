@@ -466,7 +466,29 @@ router.patch(
  *                   type: string
  *                   example: "User updated successfully"
  *                 data:
- *                   example: null
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "67aeaf64d29a2d3cfebc34a7"
+ *                     username:
+ *                       type: string
+ *                       example: "kangtran4804"
+ *                     email:
+ *                       type: string
+ *                       example: "trandanhkhang482004@gmail.com"
+ *                     role:
+ *                       type: string
+ *                       enum: ["user", "admin"]
+ *                       example: "admin"
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-14T02:50:12.931Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-14T02:50:12.931Z"
  *       400:
  *         description: Invalid input data or Email is existed.
  *         content:
