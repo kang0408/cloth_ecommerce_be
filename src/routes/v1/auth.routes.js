@@ -219,9 +219,13 @@ router.post("/reset-password", authValidate.reset, controller.reset);
  *              newPassword:
  *                type: string
  *                example: "newpassword456"
+ *              verifyToken:
+ *                type: string
+ *                example: "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6ImtoYW5nZGFuaDQ4NEBnbWFpbC5jb20iLCJpYXQiOjE3Mzk3NzUzMjAsImV4cCI6MTczOTc3NTYyMH0.i6yHH2NDPC1JqTlvTWwfroC_C9gQ3CUMXjMQzTQ4Wa2"
  *            required:
  *              - oldPassword
  *              - newPassword
+ *              - verifyToken
  *    responses:
  *      200:
  *        description: Change password successfully

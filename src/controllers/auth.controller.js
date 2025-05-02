@@ -128,7 +128,10 @@ module.exports.reset = async (req, res) => {
 // [POST] api/v1/auth/change-password
 module.exports.change = async (req, res) => {
   try {
-    const { oldPassword, newPassword } = req.body;
+    const { oldPassword, newPassword, verifyToken } = req.body;
+
+    const decoded = jwt.verify(verifyToken, process.env.JWT_SECRET);
+    if (!decoded) return errorResponse(res, error, httpStatus.BAD_REQUEST, "Token is not valid");
 
     const user = await User.findOne({ _id: req.user.id });
     if (!user) return errorResponse(res, null, httpStatus.NOT_FOUND, "Email does not exist");
