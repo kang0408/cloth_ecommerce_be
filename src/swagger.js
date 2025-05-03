@@ -30,7 +30,12 @@ const options = {
           bearerFormat: "JWT"
         }
       }
-    }
+    },
+    security: [
+      {
+        bearerAuth: []
+      }
+    ]
   },
   apis: [path.join(__dirname, "./routes/v1/*.js")]
 };

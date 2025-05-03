@@ -16,7 +16,7 @@ const router = express.Router();
  *     tags:
  *       - Users
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: query
  *         name: page
@@ -118,7 +118,7 @@ router.get("", middleware.auth(["admin"]), controller.users);
  *     tags:
  *       - Users
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Successfully retrieved user profile.
@@ -185,7 +185,7 @@ router.get("/profile", middleware.auth(["user", "admin"]), controller.profileByA
  *     tags:
  *       - Users
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -259,7 +259,7 @@ router.get("/profile/:id", middleware.auth(["admin"]), controller.profileById);
  *     tags:
  *       - Users
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -336,7 +336,7 @@ router.post(
  *     tags:
  *       - Users
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -432,7 +432,7 @@ router.patch(
  *     tags:
  *       - Users
  *     security:
- *       - BearerAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
