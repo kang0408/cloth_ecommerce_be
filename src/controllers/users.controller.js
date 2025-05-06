@@ -30,6 +30,7 @@ module.exports.users = async (req, res) => {
       res,
       {
         users,
+        totalUsers: pageTotal,
         totalPages: paginationObject.totalPage,
         currentPage: paginationObject.currentPage
       },

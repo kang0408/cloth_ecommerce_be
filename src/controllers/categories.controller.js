@@ -66,6 +66,7 @@ module.exports.categories = async (req, res) => {
       res,
       {
         cates,
+        totalCates: pageTotal,
         totalPages: paginationObject.totalPage,
         currentPage: paginationObject.currentPage
       },

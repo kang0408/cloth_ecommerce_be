@@ -40,6 +40,7 @@ module.exports.clothes = async (req, res) => {
       res,
       {
         clothes,
+        totalClothes: pageTotal,
         totalPages: paginationObject.totalPage,
         currentPage: paginationObject.currentPage
       },
