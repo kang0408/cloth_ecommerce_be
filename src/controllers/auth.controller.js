@@ -46,9 +46,13 @@ module.exports.login = async (req, res) => {
     if (!isMatch)
       return errorResponse(res, null, httpStatus.BAD_REQUEST, "Password is not correct");
 
-    const token = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
-      expiresIn: "3d"
-    });
+    const token = jwt.sign(
+      { id: user._id, role: user.role, email: user.email },
+      process.env.JWT_SECRET,
+      {
+        expiresIn: "3d"
+      }
+    );
 
     return successResponse(
       res,

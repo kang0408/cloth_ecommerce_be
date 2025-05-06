@@ -148,14 +148,16 @@ module.exports.edit = async (req, res) => {
 // [PATCH] api/v1/users/update-profile
 module.exports.updateProfileByAuth = async (req, res) => {
   try {
-    const { id } = req.user;
+    const { id, email: userEmail } = req.user;
     const { email } = req.body;
 
     const user = await User.findOne({ _id: id });
     if (!user) return errorResponse(res, error, httpStatus.NOT_FOUND, "User not found");
 
-    const isExisted = await User.findOne({ email: email });
-    if (isExisted) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Email is existed");
+    if (email !== userEmail) {
+      const isExisted = await User.findOne({ email: email });
+      if (isExisted) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Email is existed");
+    }
 
     if (user.cloudinary_id) await cloudinary.uploader.destroy(user.cloudinary_id);
 
