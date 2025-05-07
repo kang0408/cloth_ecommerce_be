@@ -15,9 +15,14 @@ module.exports.clothes = async (req, res) => {
     const find = {
       deleted: false
     };
+    const { sortBy, sortValue, search } = req.query;
+
+    // Search
+    if (search) {
+      find.title = { $regex: search, $options: "i" };
+    }
 
     // Sort
-    const { sortBy, sortValue } = req.query;
     const sort = sortHandler(req.query);
     if (sortBy) {
       if (sortBy.toLowerCase() === "like" || sortBy.toLowerCase() === "dislike")
@@ -26,7 +31,7 @@ module.exports.clothes = async (req, res) => {
 
     // Pagination
     const paginationDefault = { currentPage: 1, limitPage: 5 };
-    const pageTotal = await Cloth.countDocuments();
+    const pageTotal = await Cloth.countDocuments(find);
     const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
 
     const clothes = await Cloth.find(find)

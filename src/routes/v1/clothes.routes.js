@@ -37,6 +37,11 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           enum: [asc, desc]
+ *       - in: query
+ *         name: search
+ *         description: Search string
+ *         schema:
+ *          type: string
  *     responses:
  *       200:
  *         description: Get all clothes successfully
