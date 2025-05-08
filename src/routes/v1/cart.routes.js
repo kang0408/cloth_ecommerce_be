@@ -144,8 +144,66 @@ router.get("", middleware.auth(["user", "admin"]), controller.getCart);
  *                   type: string
  *                   example: "Cloth added to cart"
  *                 data:
- *                   type: "null"
- *                   example: null
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "67c17554f73ba67f6af8f82d"
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           productId:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                                 example: "67a57c2e54dd02487ee3e2fc"
+ *                               title:
+ *                                 type: string
+ *                                 example: "Quần short nam"
+ *                               description:
+ *                                 type: string
+ *                                 example: "Quần short nam năng động, phù hợp mùa hè"
+ *                               price:
+ *                                 type: number
+ *                                 example: 220000
+ *                               discountPercentage:
+ *                                 type: number
+ *                                 example: 10
+ *                               stock:
+ *                                 type: number
+ *                                 example: 45
+ *                               status:
+ *                                 type: string
+ *                                 example: "inactive"
+ *                               deleted:
+ *                                 type: boolean
+ *                                 example: false
+ *                               thumbnail:
+ *                                 type: string
+ *                                 example: "https://example.com/quan-short-nam.jpg"
+ *                               rating:
+ *                                 type: object
+ *                                 properties:
+ *                                   like:
+ *                                     type: number
+ *                                     example: 160
+ *                                   dislike:
+ *                                     type: number
+ *                                     example: 5
+ *                     totalPrice:
+ *                       type: number
+ *                       example: 1100000
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-28T08:35:32.252Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-28T08:40:50.389Z"
  *       400:
  *         description: Bad request - Invalid input data.
  *         content:
@@ -213,8 +271,66 @@ router.post(
  *                   type: string
  *                   example: "Cloth removed from cart"
  *                 data:
- *                   type: "null"
- *                   example: null
+ *                   type: object
+ *                   properties:
+ *                     _id:
+ *                       type: string
+ *                       example: "67c17554f73ba67f6af8f82d"
+ *                     items:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           productId:
+ *                             type: object
+ *                             properties:
+ *                               _id:
+ *                                 type: string
+ *                                 example: "67a57c2e54dd02487ee3e2fc"
+ *                               title:
+ *                                 type: string
+ *                                 example: "Quần short nam"
+ *                               description:
+ *                                 type: string
+ *                                 example: "Quần short nam năng động, phù hợp mùa hè"
+ *                               price:
+ *                                 type: number
+ *                                 example: 220000
+ *                               discountPercentage:
+ *                                 type: number
+ *                                 example: 10
+ *                               stock:
+ *                                 type: number
+ *                                 example: 45
+ *                               status:
+ *                                 type: string
+ *                                 example: "inactive"
+ *                               deleted:
+ *                                 type: boolean
+ *                                 example: false
+ *                               thumbnail:
+ *                                 type: string
+ *                                 example: "https://example.com/quan-short-nam.jpg"
+ *                               rating:
+ *                                 type: object
+ *                                 properties:
+ *                                   like:
+ *                                     type: number
+ *                                     example: 160
+ *                                   dislike:
+ *                                     type: number
+ *                                     example: 5
+ *                     totalPrice:
+ *                       type: number
+ *                       example: 1100000
+ *                     createdAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-28T08:35:32.252Z"
+ *                     updatedAt:
+ *                       type: string
+ *                       format: date-time
+ *                       example: "2025-02-28T08:40:50.389Z"
  *       400:
  *         description: Bad request - Invalid product ID.
  *         content:

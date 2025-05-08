@@ -30,7 +30,9 @@ module.exports.addToCart = async (req, res) => {
     const cloth = await Cloth.findById(productId);
     if (!cloth) return errorResponse(res, null, httpStatus.BAD_REQUEST, "Cloth not found");
 
-    let cart = await Cart.findOne({ userId });
+    let cart = await Cart.findOne({ userId })
+      .populate("items.productId", "-cloudinary_id -__v")
+      .select("-__v -userId");
     if (!cart) {
       cart = new Cart({
         userId,
@@ -51,7 +53,7 @@ module.exports.addToCart = async (req, res) => {
 
     await cart.save();
 
-    return successResponse(res, null, "Cloth added to cart");
+    return successResponse(res, cart, "Cloth added to cart");
   } catch (error) {
     return errorResponse(res, error);
   }
@@ -63,7 +65,9 @@ module.exports.remove = async (req, res) => {
     const { id: userId } = req.user;
     const productId = req.params.id;
 
-    const cart = await Cart.findOne({ userId });
+    const cart = await Cart.findOne({ userId })
+      .populate("items.productId", "-cloudinary_id -__v")
+      .select("-__v -userId");
     if (!cart) return errorResponse(res, null, httpStatus.NOT_FOUND, "Cart not found");
 
     const result = cart.items.filter((item) => {
@@ -74,7 +78,7 @@ module.exports.remove = async (req, res) => {
     cart.totalPrice = cart.items.reduce((total, item) => total + item.quantity * item.price, 0);
 
     await Cart.updateOne({ userId }, cart);
-    return successResponse(res, null, "Cloth removed from cart");
+    return successResponse(res, cart, "Cloth removed from cart");
   } catch (error) {
     return errorResponse(res, error);
   }
