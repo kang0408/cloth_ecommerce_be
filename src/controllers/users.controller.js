@@ -15,12 +15,18 @@ module.exports.users = async (req, res) => {
     // Sort
     const sort = sortHandler(req.query);
 
+    // Search
+    const find = {};
+    if (req.query.search) {
+      find.email = { $regex: req.query.search, $options: "i" };
+    }
+
     // Pagination
     const paginationDefault = { currentPage: 1, limitPage: 5 };
-    const pageTotal = await User.countDocuments();
+    const pageTotal = await User.countDocuments(find);
     const paginationObject = paginationHandler(paginationDefault, pageTotal, req.query);
 
-    const users = await User.find()
+    const users = await User.find(find)
       .skip(paginationObject.offset)
       .limit(paginationObject.limitPage)
       .sort(sort)

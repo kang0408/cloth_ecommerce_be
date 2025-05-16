@@ -43,6 +43,11 @@ const router = express.Router();
  *         schema:
  *           type: string
  *           enum: [asc, desc]
+ *       - in: query
+ *         name: search
+ *         schema:
+ *           type: string
+ *         description: Search string
  *     responses:
  *       200:
  *         description: Successfully retrieved the user list.
