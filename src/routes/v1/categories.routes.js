@@ -151,12 +151,80 @@ router.get("", controller.categories);
 
 /**
  * @swagger
+ * /categories/all:
+ *   get:
+ *     summary: Retrieve all categories with pagination and sorting options
+ *     description: Fetches a list of product categories, including parent categories and their respective subcategories. Supports pagination, sorting, and filtering.
+ *     tags:
+ *       - Categories
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Successfully retrieved the list of categories.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 success:
+ *                   type: boolean
+ *                   example: true
+ *                 message:
+ *                   type: string
+ *                   example: "Get all categories successfully"
+ *                 data:
+ *                   type: object
+ *                   properties:
+ *                     cates:
+ *                       type: array
+ *                       items:
+ *                         type: object
+ *                         properties:
+ *                           _id:
+ *                             type: string
+ *                             example: "67ad951b116fbb66a27b085a"
+ *                           name:
+ *                             type: string
+ *                             example: "Men's Fashion"
+ *                           description:
+ *                             type: string
+ *                             example: "Category for men's clothing"
+ *                           status:
+ *                             type: string
+ *                             enum: [active, inactive]
+ *                             example: "active"
+ *                           deleted:
+ *                             type: boolean
+ *                             example: false
+ *                           parentId:
+ *                             type: array
+ *                             items:
+ *                               type: string
+ *                             example: []
+ *                           createdAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-02-11T00:00:00Z"
+ *                           updatedAt:
+ *                             type: string
+ *                             format: date-time
+ *                             example: "2025-02-11T00:00:00Z"
+ *       500:
+ *         description: Internal server error.
+ */
+router.get("/all", controller.allCates);
+
+/**
+ * @swagger
  * /categories/detail/{id}:
  *   get:
  *     summary: Get category details
  *     description: Retrieve detailed information about a specific category.
  *     tags:
  *       - Categories
+ *     security:
+ *       - bearerAuth: []
  *     parameters:
  *       - in: path
  *         name: id
@@ -191,12 +259,6 @@ router.get("", controller.categories);
  *                     description:
  *                       type: string
  *                       example: "Mô tả thời trang trẻ em"
- *                     quantity:
- *                       type: integer
- *                       example: 50
- *                     image:
- *                       type: string
- *                       example: "hình ảnh"
  *                     status:
  *                       type: string
  *                       enum: [active, inactive]
@@ -260,12 +322,6 @@ router.get("/details/:id", controller.details);
  *               description:
  *                 type: string
  *                 example: "Category for men's clothing"
- *               quantity:
- *                 type: integer
- *                 example: 100
- *               image:
- *                 type: string
- *                 example: "https://example.com/images/men-fashion.jpg"
  *               status:
  *                 type: string
  *                 enum: [active, inactive]
@@ -304,12 +360,6 @@ router.get("/details/:id", controller.details);
  *                     description:
  *                       type: string
  *                       example: "Category for men's clothing"
- *                     quantity:
- *                       type: integer
- *                       example: 100
- *                     image:
- *                       type: string
- *                       example: "https://example.com/images/men-fashion.jpg"
  *                     status:
  *                       type: string
  *                       example: "active"
@@ -355,7 +405,7 @@ router.patch("/edit/:id", middleware.auth(["admin"]), cateValidate.editCate, con
  *     tags:
  *       - Categories
  *     security:
- *       - berearAuth: []
+ *       - bearerAuth: []
  *     requestBody:
  *       required: true
  *       content:
@@ -371,12 +421,6 @@ router.patch("/edit/:id", middleware.auth(["admin"]), cateValidate.editCate, con
  *                 type: string
  *                 required: true
  *                 example: "Category for men's clothing"
- *               quantity:
- *                 type: integer
- *                 example: 100
- *               image:
- *                 type: string
- *                 example: "https://example.com/images/men-fashion.jpg"
  *               status:
  *                 type: string
  *                 enum: [active, inactive]
@@ -415,12 +459,6 @@ router.patch("/edit/:id", middleware.auth(["admin"]), cateValidate.editCate, con
  *                     description:
  *                       type: string
  *                       example: "Category for men's clothing"
- *                     quantity:
- *                       type: integer
- *                       example: 100
- *                     image:
- *                       type: string
- *                       example: "https://example.com/images/men-fashion.jpg"
  *                     status:
  *                       type: string
  *                       example: "active"

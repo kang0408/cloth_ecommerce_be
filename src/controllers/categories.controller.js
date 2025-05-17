@@ -77,6 +77,17 @@ module.exports.categories = async (req, res) => {
   }
 };
 
+// [GET] api/v1/categories/all
+module.exports.allCates = async (req, res) => {
+  try {
+    const cates = await Category.find().select("-__v");
+
+    return successResponse(res, cates, "Get all categories successfully");
+  } catch (error) {
+    return errorResponse(res, error);
+  }
+};
+
 // [GET] api/v1/categories/details/:id
 module.exports.details = async (req, res) => {
   try {
@@ -108,7 +119,10 @@ module.exports.edit = async (req, res) => {
     }
 
     const { parentId = [] } = req.body;
-    const objectIdArr = parentId.map((id) => new mongoose.Types.ObjectId(id));
+    const objectIdArr = [];
+    parentId.forEach((id) => {
+      if (id != undefined || id != null) objectIdArr.push(new mongoose.Types.ObjectId(id));
+    });
 
     req.body.parentId = objectIdArr;
     req.body.updatedAt = new Date();
@@ -134,7 +148,10 @@ module.exports.edit = async (req, res) => {
 module.exports.create = async (req, res) => {
   try {
     const { parentId = [] } = req.body;
-    const objectIdArr = parentId.map((id) => new mongoose.Types.ObjectId(id));
+    const objectIdArr = [];
+    parentId.forEach((id) => {
+      if (id != undefined || id != null) objectIdArr.push(new mongoose.Types.ObjectId(id));
+    });
 
     req.body.parentId = objectIdArr;
     req.body.createdAt = new Date();
