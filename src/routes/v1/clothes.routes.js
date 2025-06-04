@@ -18,30 +18,30 @@ const router = express.Router();
  *     parameters:
  *       - in: query
  *         name: limit
- *         description: Limited clothes per page in pagination
+ *         description: Limit number of clothes per page (pagination)
  *         schema:
  *           type: integer
  *       - in: query
  *         name: page
- *         description: Page number in clothes list
+ *         description: Page number to retrieve
  *         schema:
  *           type: integer
  *       - in: query
  *         name: sortBy
- *         description: Sort by a specific field
+ *         description: Field to sort by
  *         schema:
  *           type: string
  *       - in: query
  *         name: sortValue
- *         description: Sort in descending or ascending order
+ *         description: Sort direction (ascending or descending)
  *         schema:
  *           type: string
  *           enum: [asc, desc]
  *       - in: query
  *         name: search
- *         description: Search string
+ *         description: Keyword to search clothes
  *         schema:
- *          type: string
+ *           type: string
  *     responses:
  *       200:
  *         description: Get all clothes successfully
@@ -49,81 +49,21 @@ const router = express.Router();
  *           application/json:
  *             example:
  *               success: true
- *               message: "Get all clothes successfully"
+ *               message: Get all clothes successfully
  *               data:
  *                 clothes:
- *                   - rating:
- *                       like: 120
- *                       dislike: 5
- *                     _id: "67a57c2e54dd02487ee3e2f3"
+ *                   - _id: "67a57c2e54dd02487ee3e2f3"
  *                     title: "Quần áo thể thao nam"
  *                     description: "Mô tả quần áo thể thao nam"
- *                     price: 150000
- *                     discountPercentage: 30
- *                     stock: 100
+ *                     thumbnail: "https://res.cloudinary.com/example.jpg"
  *                     status: "active"
  *                     deleted: false
+ *                     categories: []
+ *                     createdAt: "2025-02-10T08:00:57.450Z"
  *                     updatedAt: "2025-02-23T08:40:04.116Z"
- *                     thumbnail: "https://res.cloudinary.com/dt8cirdvr/image/upload/v1740300000/clothes-management/lgfr8hqr315hlz30xyiq.png"
- *                     deletedAt: "2025-02-10T08:00:57.450Z"
- *                     categories:
- *                       - _id: "65c892f1a2b3c4d5e6f70111"
- *                         name: "Thời trang nam"
- *                       - _id: "65c892f1a2b3c4d5e6f70113"
- *                         name: "Áo nam"
- *                   - rating:
- *                       like: 175
- *                       dislike: 6
- *                     categories: []
- *                     _id: "67a57c2e54dd02487ee3e2f7"
- *                     title: "Áo hoodie nam nữ"
- *                     description: "Áo hoodie unisex, form rộng"
- *                     price: 380000
- *                     discountPercentage: 12
- *                     stock: 60
- *                     status: "active"
- *                     deleted: false
- *                     thumbnail: "https://example.com/ao-hoodie.jpg"
- *                   - rating:
- *                       like: 130
- *                       dislike: 4
- *                     categories: []
- *                     _id: "67a57c2e54dd02487ee3e2f9"
- *                     title: "Áo len nữ mùa đông"
- *                     description: "Áo len nữ giữ ấm, mềm mại"
- *                     price: 320000
- *                     discountPercentage: 18
- *                     stock: 20
- *                     thumbnail: "https://example.com/ao-len-nu.jpg"
- *                     status: "active"
- *                     deleted: false
- *                   - rating:
- *                       like: 98
- *                       dislike: 3
- *                     categories: []
- *                     _id: "67a57c2e54dd02487ee3e2f4"
- *                     title: "Quần áo thể thao nam"
- *                     description: "Mô tả quần áo thể thao nam"
+ *                     stock: 100
  *                     price: 150000
- *                     discountPercentage: 20
- *                     stock: 10
- *                     status: "active"
- *                     deleted: false
- *                     thumbnail: "thumbnail"
- *                     updatedAt: "2025-02-10T07:33:12.622Z"
- *                   - rating:
- *                       like: 210
- *                       dislike: 12
- *                     categories: []
- *                     _id: "67a57c2e54dd02487ee3e2fb"
- *                     title: "Áo croptop nữ"
- *                     description: "Áo croptop ngắn, phù hợp mùa hè"
- *                     price: 180000
- *                     discountPercentage: 8
- *                     stock: 55
- *                     thumbnail: "https://example.com/ao-croptop.jpg"
- *                     status: "active"
- *                     deleted: false
+ *                 totalClothes: 15
  *                 totalPages: 6
  *                 currentPage: 1
  *       500:
@@ -305,10 +245,6 @@ router.get("/cate/:id", controller.clothesByCate);
  *               price:
  *                 type: number
  *                 description: Price of the cloth
- *               discountPercentage:
- *                 type: number
- *                 description: Discount percentage (if any)
- *                 example: 5
  *               stock:
  *                 type: number
  *                 default: 0
@@ -341,7 +277,6 @@ router.get("/cate/:id", controller.clothesByCate);
  *                 title: "Quân áo mới 22"
  *                 description: "Mô tả quần áo"
  *                 price: 150000
- *                 discountPercentage: 10
  *                 stock: 50
  *                 thumbnail: "https://res.cloudinary.com/image/upload/clothes.jpg"
  *                 status: "active"
@@ -402,10 +337,6 @@ router.post(
  *               price:
  *                 type: number
  *                 description: Price of the cloth
- *               discountPercentage:
- *                 type: number
- *                 description: Discount percentage (if any)
- *                 example: 5
  *               stock:
  *                 type: number
  *                 description: Number of items in stock
@@ -436,7 +367,6 @@ router.post(
  *                 title: "Quân áo mới 22"
  *                 description: "Mô tả quần áo"
  *                 price: 150000
- *                 discountPercentage: 10
  *                 stock: 50
  *                 thumbnail: "https://res.cloudinary.com/image/upload/clothes.jpg"
  *                 status: "active"
