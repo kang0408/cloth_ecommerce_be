@@ -4,27 +4,28 @@ const clothSchema = new mongoose.Schema(
   {
     title: String,
     description: String,
-    price: Number,
-    discountPercentage: Number,
+    price: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
+    discountPercentage: {
+      type: Number,
+      min: 0,
+      default: 0
+    },
     stock: {
       type: Number,
+      min: 0,
       default: 0
     },
     thumbnail: String,
     cloudinary_id: String,
     status: {
       type: String,
+      enum: ["active", "inactive"],
       default: "active"
     },
-    rating: {
-      like: Number,
-      dislike: Number
-    },
-    deleted: {
-      type: Boolean,
-      default: false
-    },
-    deletedAt: Date,
     categories: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }]
   },
   {

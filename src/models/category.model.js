@@ -8,14 +8,7 @@ const categorySchema = new mongoose.Schema(
     parentId: {
       type: Array,
       default: [{ type: mongoose.Schema.Types.ObjectId, ref: "Category" }]
-    },
-    deleted: {
-      type: Boolean,
-      default: false
-    },
-    createdAt: Date,
-    deletedAt: Date,
-    updatedAt: Date
+    }
   },
   {
     timestamps: true
