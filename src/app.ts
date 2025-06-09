@@ -5,6 +5,7 @@ import helmet from "helmet";
 import morgan from "morgan";
 import httpStatus from "http-status";
 import compression from "compression";
+import cookieParser from "cookie-parser";
 
 require("dotenv").config();
 
@@ -25,7 +26,8 @@ app.use(
   cors({
     origin: "*",
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
-    allowedHeaders: ["Content-Type", "Authorization"]
+    allowedHeaders: ["Content-Type", "Authorization"],
+    credentials: true
   })
 );
 // helmet
@@ -35,6 +37,8 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 // gzip compression
 app.use(compression());
+// cookie-parser
+app.use(cookieParser());
 
 // router
 router(app);

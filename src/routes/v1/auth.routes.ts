@@ -252,7 +252,38 @@ router.post(
   "/change-password",
   middleware.auth(["user", "admin"]),
   authValidate.change,
-  controller.change
+  controller.changePassword
 );
 
+/**
+ * @swagger
+ * /auth/refresh-token:
+ *  get:
+ *    summary: Refresh access token
+ *    description: API for user to refresh access token
+ *    tags:
+ *      - Auth
+ *    responses:
+ *      200:
+ *        description: Refresh token successfully
+ *        content:
+ *          application/json:
+ *            example:
+ *              success: true
+ *              message: "Refresh token successfully"
+ *              data: {
+ *                "accesstoken": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6IjY3YWVhZjY0ZDI5YTJkM2NmZWJjMzRhNyIsInJvbGUiOiJhZG1pbiIsImlhdCI6MTc0MDYyNjkxMiwiZXhwIjoxNzQwODg2MTEyfQ.ubFOS3sKbNyZyW93NnwzzsoHVqrHzGAArWWIuSbgRjK"
+ *              }
+ *      401:
+ *        description: Refresh token not found
+ *        content:
+ *          application/json:
+ *            example:
+ *              success: false
+ *              code: 401
+ *              message: "Refresh token not found"
+ *      500:
+ *        description: Refresh token failed
+ */
+router.get("/refresh-token", controller.refreshToken);
 export default router;
