@@ -9,6 +9,7 @@ import {
 } from "../services/wishlists.services";
 
 import { successResponse, errorResponse } from "../helpers/response.helper";
+import { IUserJWT } from "../types/user.types";
 
 export const getAll = async (req: Request, res: Response) => {
   try {
@@ -16,7 +17,7 @@ export const getAll = async (req: Request, res: Response) => {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { id: userId } = req.user;
+    const { id: userId } = req.user as IUserJWT;
 
     const list = await findWishlistByUserId(userId);
 
@@ -37,7 +38,7 @@ export const add = async (req: Request, res: Response) => {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { id: userId } = req.user;
+    const { id: userId } = req.user as IUserJWT;
     const productId = req.params.id;
 
     await addProductToWishlist(userId, productId);
@@ -59,7 +60,7 @@ export const remove = async (req: Request, res: Response) => {
       return;
     }
     const productId = req.params.id;
-    const { id: userId } = req.user;
+    const { id: userId } = req.user as IUserJWT;
 
     await removeProductFromWishlist(userId, productId);
 
@@ -82,7 +83,7 @@ export const clear = async (req: Request, res: Response) => {
       res.status(401).json({ message: "Unauthorized" });
       return;
     }
-    const { id: userId } = req.user;
+    const { id: userId } = req.user as IUserJWT;
 
     await clearWishlistByUserId(userId);
 

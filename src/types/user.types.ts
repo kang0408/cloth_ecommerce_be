@@ -5,6 +5,7 @@ export interface IUser {
   role: "user" | "admin";
   avatar: string;
   cloudinary_id: string;
+  google_id?: string;
   createdAt?: Date;
   updatedAt?: Date;
 }

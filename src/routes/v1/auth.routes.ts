@@ -1,4 +1,5 @@
 import express from "express";
+import passport from "passport";
 
 import * as controller from "../../controllers/auth.controller";
 import * as authValidate from "../../validations/auth.validation";
@@ -286,4 +287,29 @@ router.post(
  *        description: Refresh token failed
  */
 router.get("/refresh-token", controller.refreshToken);
+
+/**
+ * @swagger
+ * /auth/google:
+ *  get:
+ *    summary: Login with google
+ *    tags:
+ *      - Auth
+ */
+router.get("/google", passport.authenticate("google", { scope: ["profile", "email"] }));
+
+/**
+ * @swagger
+ * /auth/google/callback:
+ *  get:
+ *    summary: Login with google
+ *    tags:
+ *      - Auth
+ */
+router.get(
+  "/google/callback",
+  passport.authenticate("google", { session: false, failureRedirect: "/login" }),
+  controller.googleCallback
+);
+
 export default router;
