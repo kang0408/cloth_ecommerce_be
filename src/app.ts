@@ -12,6 +12,8 @@ require("dotenv").config();
 import router from "./routes/v1/index.routes";
 import connect from "./configs/database";
 import swaggerDocs from "./swagger";
+import "./configs/passport";
+import passport from "passport";
 
 // connect to database
 connect();
@@ -39,6 +41,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(compression());
 // cookie-parser
 app.use(cookieParser());
+// google auth
+app.use(passport.initialize());
 
 // router
 router(app);

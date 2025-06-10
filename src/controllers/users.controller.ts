@@ -13,6 +13,8 @@ import paginationHandler from "../helpers/pagination.helper";
 import sortHandler from "../helpers/sort.helper";
 import { successResponse, errorResponse } from "../helpers/response.helper";
 
+import { IUserJWT } from "../types/user.types";
+
 // [GET] api/v1/users
 export const users = async (req: Request, res: Response) => {
   try {
@@ -54,7 +56,7 @@ export const profileByAuth = async (req: Request, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const { id, role } = req.user;
+    const { id, role } = req.user as IUserJWT;
 
     const data = await getUserById(id, role);
 
@@ -70,7 +72,7 @@ export const profileById = async (req: Request, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const { role } = req.user;
+    const { role } = req.user as IUserJWT;
     const { id } = req.params;
 
     const data = await getUserById(id, role);
@@ -122,7 +124,7 @@ export const updateProfileByAuth = async (req: Request, res: Response) => {
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-    const { id, email: userEmail } = req.user;
+    const { id, email: userEmail } = req.user as IUserJWT;
     const file = Array.isArray(req.files) && req.files.length > 0 ? req.files[0] : undefined;
 
     const data = await updateProfile(id, userEmail, req.body, file);

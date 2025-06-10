@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import httpStatus from "http-status";
 import jwt from "jsonwebtoken";
+import passport from "passport";
 
 import * as authService from "../services/auth.services";
 import { successResponse, errorResponse } from "../helpers/response.helper";
@@ -62,7 +63,7 @@ export const reset = async (req: Request, res: Response) => {
 // [PUT] /auth/change-password
 export const changePassword = async (req: Request, res: Response) => {
   try {
-    const userId = req.user?.id;
+    const userId = (req.user as IUserJWT)?.id;
     await authService.changePassword({ ...req.body, userId });
     successResponse(res, null, "Change password successfully");
   } catch (error: any) {
@@ -102,5 +103,43 @@ export const refreshToken = async (req: Request, res: Response) => {
     );
   } catch (error: any) {
     errorResponse(res, null, error.status || 500, error.message || "Refresh token failed");
+  }
+};
+
+export const googleCallback = async (req: Request, res: Response) => {
+  try {
+    const user = req.user as IUserJWT;
+
+    const accessToken = jwt.sign(
+      { id: user?.id, email: user?.email, role: user?.role },
+      process.env.JWT_SECRET || "",
+      {
+        expiresIn: "3d"
+      }
+    );
+
+    const refreshToken = jwt.sign(
+      { id: user?.id, email: user?.email, role: user?.role },
+      process.env.JWT_SECRET || "",
+      {
+        expiresIn: "7d"
+      }
+    );
+
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 3 * 24 * 60 * 60 * 1000
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: true,
+      maxAge: 7 * 24 * 60 * 60 * 1000
+    });
+
+    res.redirect(process.env.CLIENT_URL || "");
+  } catch (error) {
+    errorResponse(res, null, httpStatus.INTERNAL_SERVER_ERROR, "failed");
   }
 };

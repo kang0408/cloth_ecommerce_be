@@ -14,9 +14,12 @@ const userSchema = new mongoose.Schema<IUserDocument>(
       type: String,
       required: true
     },
+    google_id: String,
     password: {
       type: String,
-      required: true
+      required: function () {
+        return !this.google_id;
+      }
     },
     role: {
       type: String,
